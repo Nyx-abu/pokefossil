@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { parseSaveFile, SaveParserError } from './parser';
+import { parseSaveFile, extractParty, SaveParserError } from './parser';
 import { calculateSectionChecksum } from './checksum';
+import { xorMask32 } from './crypto';
+import { SaveBlock } from './types';
 
 const DATA_SIZE_FOR_ID: Record<number, number> = {
     0: 3884, 1: 3968, 2: 3968, 3: 3968, 4: 3848,
@@ -141,4 +143,130 @@ describe('Save File Parser (§2.1-2.6)', () => {
         expect(parsed.trainerInfo.trainerId).toBe(12345);
         expect(parsed.trainerInfo.secretId).toBe(54321);
     });
+
+    it('returns empty party when party count is 0', () => {
+        const fullSave = new Uint8Array(131072);
+        const blockA = createValidBlock(1);
+        fullSave.set(blockA, 0x00000);
+
+        const parsed = parseSaveFile(fullSave.buffer);
+        expect(parsed.party).toEqual([]);
+    });
+
+    it('parses party pokemon correctly from Section 1', () => {
+        const fullSave = new Uint8Array(131072);
+        const blockA = createValidBlock(1);
+        const sec1 = blockA.subarray(4096, 8192);
+        const secView = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
+
+        secView.setUint32(0x0034, 2, true);
+        sec1.set(createMockPokemonData(0, 25), 0x0038); // Pikachu
+        sec1.set(createMockPokemonData(24, 1), 0x0038 + 100); // Bulbasaur
+
+        const checksum = calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]);
+        secView.setUint16(0x0FF6, checksum, true);
+
+        fullSave.set(blockA, 0x00000);
+        const parsed = parseSaveFile(fullSave.buffer);
+
+        expect(parsed.party).toHaveLength(2);
+        expect(parsed.party[0].species).toBe(25);
+        expect(parsed.party[1].species).toBe(1);
+        expect(parsed.party[0].verdict).toBeDefined();
+    });
+
+    it('only parses up to partyCount even if residual data exists in subsequent slots', () => {
+        const fullSave = new Uint8Array(131072);
+        const blockA = createValidBlock(1);
+        const sec1 = blockA.subarray(4096, 8192);
+        const secView = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
+
+        secView.setUint32(0x0034, 1, true);
+        sec1.set(createMockPokemonData(0, 25), 0x0038);
+        sec1.set(createMockPokemonData(24, 1), 0x0038 + 100);
+        sec1.set(createMockPokemonData(48, 4), 0x0038 + 200);
+
+        const checksum = calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]);
+        secView.setUint16(0x0FF6, checksum, true);
+
+        fullSave.set(blockA, 0x00000);
+        const parsed = parseSaveFile(fullSave.buffer);
+
+        expect(parsed.party).toHaveLength(1);
+        expect(parsed.party[0].species).toBe(25);
+    });
+
+    it('clamps party count to maximum 6', () => {
+        const fullSave = new Uint8Array(131072);
+        const blockA = createValidBlock(1);
+        const sec1 = blockA.subarray(4096, 8192);
+        const secView = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
+
+        secView.setUint32(0x0034, 10, true);
+        for (let i = 0; i < 6; i++) {
+            sec1.set(createMockPokemonData(i * 24, i + 1), 0x0038 + i * 100);
+        }
+
+        const checksum = calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]);
+        secView.setUint16(0x0FF6, checksum, true);
+
+        fullSave.set(blockA, 0x00000);
+        const parsed = parseSaveFile(fullSave.buffer);
+
+        expect(parsed.party).toHaveLength(6);
+    });
+
+    it('extractParty directly extracts party from SaveBlock', () => {
+        const blockA = createValidBlock(1);
+        const sec1 = blockA.subarray(4096, 8192);
+        const secView = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
+        secView.setUint32(0x0034, 1, true);
+        sec1.set(createMockPokemonData(0, 25), 0x0038);
+
+        const block: SaveBlock = {
+            isValid: true,
+            saveIndex: 1,
+            sections: {
+                1: {
+                    id: 1,
+                    data: sec1,
+                    footer: { sectionId: 1, checksum: 0, signature: 0x08012025, saveIndex: 1 }
+                }
+            }
+        };
+
+        const party = extractParty(block);
+        expect(party).toHaveLength(1);
+        expect(party[0].species).toBe(25);
+    });
 });
+
+function createMockPokemonData(pid: number, species: number, otid: number = 0x12345678): Uint8Array {
+    const data = new Uint8Array(100);
+    const view = new DataView(data.buffer);
+    view.setUint32(0x00, pid, true);
+    view.setUint32(0x04, otid, true);
+    data[0x08] = 0xBB; // 'A'
+    data[0x09] = 0xFF;
+    data[0x12] = 2; // English
+    data[0x13] = 2; // HasSpecies
+
+    const decrypted = new Uint8Array(48);
+    const decView = new DataView(decrypted.buffer);
+    // pid % 24 = 0 -> GAEM: Growth at offset 0
+    decView.setUint16(0x00, species, true);
+    decView.setUint32(0x04, 100, true);
+
+    let sum = 0;
+    for (let i = 0; i < 48; i += 2) {
+        sum = (sum + decView.getUint16(i, true)) & 0xFFFF;
+    }
+    view.setUint16(0x1C, sum, true);
+
+    const key = (pid ^ otid) >>> 0;
+    const encrypted = xorMask32(decrypted, key);
+    data.set(encrypted, 0x20);
+
+    return data;
+}
+

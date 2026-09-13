@@ -90,14 +90,38 @@ export function parseSaveFile(buffer: ArrayBuffer): SaveFile {
 
     const activeBoxes = extractBoxes(activeBlock);
     const inactiveBoxes = inactiveBlock ? extractBoxes(inactiveBlock) : [];
+    const party = extractParty(activeBlock);
 
     return {
         activeBlock,
         inactiveBlock,
         trainerInfo: parseTrainerInfo(activeBlock.sections[0].data),
         pokemonBoxes: activeBoxes,
-        inactivePokemonBoxes: inactiveBoxes
+        inactivePokemonBoxes: inactiveBoxes,
+        party
     };
+}
+
+export function extractParty(block: SaveBlock): Pokemon[] {
+    const sec1 = block.sections[1];
+    if (!sec1) return [];
+
+    const view = new DataView(sec1.data.buffer, sec1.data.byteOffset, sec1.data.byteLength);
+    const rawCount = view.getUint32(0x0034, true);
+    const partyCount = Math.min(Math.max(0, rawCount), 6);
+
+    const party: Pokemon[] = [];
+    for (let i = 0; i < partyCount; i++) {
+        const offset = 0x0038 + i * 100;
+        const pokeData = sec1.data.subarray(offset, offset + 100);
+        const pkmn = parsePokemon(pokeData, true);
+        if (pkmn) {
+            pkmn.verdict = performForensics(pkmn);
+            party.push(pkmn);
+        }
+    }
+
+    return party;
 }
 
 export function extractBoxes(block: SaveBlock): PokemonBox[] {

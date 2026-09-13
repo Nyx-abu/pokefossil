@@ -23,6 +23,7 @@ export interface SaveFile {
     trainerInfo: TrainerInfo;
     pokemonBoxes: PokemonBox[];
     inactivePokemonBoxes: PokemonBox[];
+    party: Pokemon[];
 }
 
 export interface TrainerInfo {
