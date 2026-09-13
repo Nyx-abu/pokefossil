@@ -18,10 +18,10 @@ function App() {
     : lastPressed;
 
   return (
-    <div className="min-h-screen p-2 sm:p-4 md:p-8 flex items-center justify-center bg-[#d0d5df] overflow-x-hidden overflow-y-auto">
+    <div className="min-h-screen p-2 sm:p-4 md:p-8 flex items-center justify-center bg-[var(--color-gba-plastic)] overflow-x-hidden overflow-y-auto">
       
       {/* The GBA Plastic Shell - Responsive: Vertical on mobile, Horizontal on desktop */}
-      <div className="neu-plastic rounded-[28px] sm:rounded-[40px] md:rounded-[60px] p-3 sm:p-6 md:p-10 w-full max-w-xl md:max-w-6xl shadow-2xl relative flex flex-col md:flex-row items-center justify-center gap-3 sm:gap-6 md:gap-12">
+      <div className="neu-plastic rounded-[28px] sm:rounded-[40px] md:rounded-[60px] p-3 sm:p-6 md:p-10 w-full max-w-xl md:max-w-6xl relative flex flex-col md:flex-row items-center justify-center gap-3 sm:gap-6 md:gap-12">
 
         {/* Desktop Left Controls (D-PAD) - Hidden on mobile, shown on md */}
         <div className="hidden md:flex flex-col items-center justify-center w-48 relative">
