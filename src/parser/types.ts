@@ -34,5 +34,44 @@ export interface TrainerInfo {
 }
 
 export interface PokemonBox {
-    // We will expand this
+    name: string;
+    pokemon: Pokemon[];
+}
+
+export type VerdictTier = 'VERIFIED' | 'UNCERTAIN' | 'LIKELY_MODIFIED' | 'INVALID';
+
+export interface ForensicsVerdict {
+    tier: VerdictTier;
+    evidence: string[];
+}
+
+export interface Pokemon {
+    pid: number;
+    otid: number;
+    nickname: string;
+    language: number;
+    isBadEgg: boolean;
+    hasSpecies: boolean;
+    otName: string;
+    checksum: number;
+    calculatedChecksum: number;
+    
+    species: number;
+    heldItem: number;
+    experience: number;
+    friendship: number;
+    
+    moves: number[];
+    movePps: number[];
+    
+    evs: number[];
+    ivs: number[];
+    isEgg: boolean;
+    abilitySlot: number;
+    
+    metLevel: number;
+    gameOfOrigin: number;
+    pokeBall: number;
+    
+    verdict?: ForensicsVerdict;
 }
