@@ -43,6 +43,46 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  .neu-plastic {
+    background: var(--color-gba-plastic);
+    box-shadow: 8px 8px 16px var(--color-gba-plastic-dark), 
+               -8px -8px 16px var(--color-gba-plastic-light);
+  }
+  
+  .neu-plastic-inset {
+    background: var(--color-gba-plastic);
+    box-shadow: inset 6px 6px 12px var(--color-gba-plastic-dark), 
+                inset -6px -6px 12px var(--color-gba-plastic-light);
+  }
+  
+  .neu-screen-bezel {
+    background: var(--color-gba-screen-border);
+    border-radius: 12px 12px 32px 12px;
+    padding: 16px;
+    box-shadow: inset 2px 2px 8px rgba(0,0,0,0.8),
+                4px 4px 10px rgba(0,0,0,0.2);
+  }
+  
+  .neu-screen {
+    background: var(--color-gba-screen-bg);
+    color: var(--color-gba-screen-text);
+    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.3);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .neu-screen::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(rgba(18, 16, 13, 0) 50%, rgba(0, 0, 0, 0.05) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+
   /* Authentic FireRed / Gen 3 Cream Dialogue Window */
   .pokemon-dialog-cream {
     background-color: #f8f8f0;
