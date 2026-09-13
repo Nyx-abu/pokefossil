@@ -416,7 +416,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                                         <PokemonSprite
                                                             species={mon.species}
                                                             alt={nickname || speciesName}
-                                                            className="w-full h-full object-contain drop-shadow-sm"
+                                                            className="w-full h-full object-contain drop-shadow-sm sprite-sepia float-animation"
                                                         />
                                                     </div>
 
@@ -524,7 +524,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                         <PokemonSprite
                                             species={ghost!.pokemon.species}
                                             alt={ghostData.nickname}
-                                            className="w-full h-full object-contain filter grayscale contrast-90 opacity-70"
+                                            className="w-full h-full object-contain filter grayscale contrast-90 opacity-70 float-animation"
                                         />
                                     </div>
 

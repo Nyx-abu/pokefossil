@@ -22,7 +22,7 @@ function App() {
 
   if (currentScreen === 'DROP' || !saveFile) {
     return (
-      <div className="min-h-screen bg-[#f4f1ea] overflow-hidden">
+      <div className="min-h-screen bg-[#f4f1ea] overflow-hidden relative"><div className="vignette-overlay" /><div className="noise-overlay" />
         <DropZone />
       </div>
     );
@@ -30,7 +30,7 @@ function App() {
 
   if (currentScreen === 'STORY') {
     return (
-      <div className="min-h-screen bg-[#f4f1ea] overflow-hidden">
+      <div className="min-h-screen bg-[#f4f1ea] overflow-hidden relative"><div className="vignette-overlay" /><div className="noise-overlay" />
         <Homecoming 
           saveFile={saveFile} 
           ghosts={ghosts} 
@@ -40,10 +40,13 @@ function App() {
     );
   }
 
-  // EXPLORE MODE (Database & Reference)
+  // EXPLORE MODE
   return (
-    <div className="min-h-screen bg-[#f4f1ea] text-[#3a3532] flex flex-col font-serif">
-      <header className="bg-white/80 backdrop-blur-sm border-b border-[#c19b6c]/30 shadow-sm z-20 shrink-0 sticky top-0">
+    <div className="min-h-screen bg-[#f4f1ea] text-[#3a3532] flex flex-col font-serif relative">
+      <div className="vignette-overlay" />
+      <div className="noise-overlay" />
+      
+      <header className="bg-transparent border-b border-[#dfd8ca]/50 z-20 shrink-0 sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 py-2 sm:py-0 gap-2 sm:gap-4">
             <div className="flex items-center gap-3">

@@ -112,6 +112,51 @@
   .animate-slide-in {
     animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  
+  .noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.25;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  .vignette-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 40;
+    background: radial-gradient(circle, transparent 50%, rgba(58, 53, 50, 0.08) 150%);
+  }
+  
+  .photo-fade-in {
+    animation: photoFadeIn 0.7s ease-out forwards;
+  }
+  
+  .photo-fade-in-delayed-1 {
+    opacity: 0;
+    animation: photoFadeIn 0.7s ease-out 0.8s forwards;
+  }
+
+  .photo-fade-in-delayed-2 {
+    opacity: 0;
+    animation: photoFadeIn 0.7s ease-out 1.6s forwards;
+  }
+
+  .float-animation {
+    animation: floatAnim 3s ease-in-out infinite;
+  }
+  
+  .sprite-sepia {
+    filter: sepia(0.3) contrast(0.9) brightness(0.95);
+  }
 }
 
 @keyframes fadeIn {
@@ -135,14 +180,23 @@
   }
 }
 
-@keyframes cross-fade-up {
+@keyframes photoFadeIn {
   0% {
     opacity: 0;
-    transform: translateY(10px);
+    filter: blur(4px);
+    transform: scale(0.98);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    filter: blur(0);
+    transform: scale(1);
   }
 }
+
+@keyframes floatAnim {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+  100% { transform: translateY(0px); }
+}
+
 
