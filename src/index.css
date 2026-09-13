@@ -1,22 +1,108 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-bg: #12100D;
-  --color-brand-accent: #D9A441;
-  --color-verdict-verified: #5FA777;
-  --color-verdict-uncertain: #D9A441;
-  --color-verdict-modified: #C1554B;
-  --color-verdict-ghost: #8C7BC4;
+  --color-gba-plastic: #d0d5df;
+  --color-gba-plastic-dark: #b8bfcc;
+  --color-gba-plastic-light: #e8ecf2;
+  --color-gba-screen-border: #2a2c36;
+  --color-gba-screen-bg: #8ba68b; /* Classic GameBoy green LCD color */
+  --color-gba-screen-text: #1b3819;
+  
+  --color-gba-button-a: #d9415c;
+  --color-gba-button-b: #d9415c;
+  --color-gba-dpad: #333333;
+  
+  --color-brand-accent: #d9415c;
+  --color-verdict-verified: #5fa777;
+  --color-verdict-uncertain: #d9a441;
+  --color-verdict-modified: #c1554b;
+  --color-verdict-ghost: #8c7bc4;
 }
 
-body {
-  background-color: var(--color-brand-bg);
-  color: #E2E2E2;
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 0;
+@layer base {
+  body {
+    background-color: var(--color-gba-plastic);
+    color: #333;
+    font-family: "Inter", sans-serif;
+  }
 }
 
-.font-mono {
-  font-family: 'JetBrains Mono', monospace;
+@layer utilities {
+  .neu-plastic {
+    background: var(--color-gba-plastic);
+    box-shadow:  8px 8px 16px var(--color-gba-plastic-dark), 
+                -8px -8px 16px var(--color-gba-plastic-light);
+  }
+  
+  .neu-plastic-inset {
+    background: var(--color-gba-plastic);
+    box-shadow: inset 6px 6px 12px var(--color-gba-plastic-dark), 
+                inset -6px -6px 12px var(--color-gba-plastic-light);
+  }
+  
+  .neu-screen-bezel {
+    background: var(--color-gba-screen-border);
+    border-radius: 12px 12px 32px 12px;
+    padding: 16px;
+    box-shadow: inset 2px 2px 8px rgba(0,0,0,0.8),
+                4px 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .neu-screen {
+    background: var(--color-gba-screen-bg);
+    color: var(--color-gba-screen-text);
+    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.3);
+    border-radius: 4px;
+    font-family: "Courier New", Courier, monospace;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Pixel grid overlay for LCD effect */
+  .neu-screen::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(rgba(18, 16, 13, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .neu-button-red {
+    background: var(--color-gba-button-a);
+    box-shadow: inset -2px -2px 6px rgba(0,0,0,0.3),
+                inset 2px 2px 6px rgba(255,255,255,0.4),
+                4px 4px 8px rgba(0,0,0,0.2);
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    cursor: pointer;
+  }
+
+  .neu-button-red:active {
+    box-shadow: inset 4px 4px 8px rgba(0,0,0,0.5),
+                inset -2px -2px 6px rgba(255,255,255,0.2);
+    transform: scale(0.96);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.3);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.5);
+  }
 }
