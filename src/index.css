@@ -2,9 +2,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-gba-plastic: #d0d5df;
-  --color-gba-plastic-dark: #b8bfcc;
-  --color-gba-plastic-light: #e8ecf2;
+  --color-gba-plastic: #5c55a3; /* Classic Indigo */
+  --color-gba-plastic-dark: #45407a;
+  --color-gba-plastic-light: #766ecc;
   --color-gba-screen-border: #2a2c36;
   --color-gba-screen-bg: #16202e; /* GBA Gen 3 deep TFT screen tone */
   --color-gba-screen-text: #eef2f7;

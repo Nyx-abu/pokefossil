@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useStore } from '../store';
 import { PokemonSprite } from './PokemonSprite';
 
 import { getDisplayName } from '../utils/pokemonNames';
+import { useControlsStore } from '../controlsStore';
 
 export const GhostGallery: React.FC = () => {
     const { ghosts, setScreen } = useStore();
+
+    useEffect(() => {
+        const unsubscribe = useControlsStore.getState().addListener((button) => {
+            if (button === 'B') {
+                setScreen('DASHBOARD');
+            }
+        });
+        return unsubscribe;
+    }, [setScreen]);
 
     return (
         <div className="flex flex-col h-full overflow-hidden">

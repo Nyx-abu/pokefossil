@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useStore } from '../store';
 import { Pokemon } from '../parser/types';
 import { PokemonSprite } from './PokemonSprite';
+import { getDisplayName } from '../utils/pokemonNames';
+import { useControlsStore } from '../controlsStore';
 
 export const LegitimacyReport: React.FC = () => {
     const { saveFile, setScreen } = useStore();
+
+    useEffect(() => {
+        const unsubscribe = useControlsStore.getState().addListener((button) => {
+            if (button === 'B') {
+                setScreen('DASHBOARD');
+            }
+        });
+        return unsubscribe;
+    }, [setScreen]);
 
     if (!saveFile) return null;
 
@@ -33,17 +44,17 @@ export const LegitimacyReport: React.FC = () => {
 
             <div className="flex-grow overflow-y-auto pr-1 scrollbar-thin pb-6 space-y-3 min-h-0">
                 {allPokemon.map((p, i) => (
-                    <div key={i} className="border border-gray-700 rounded-lg p-3 bg-[#1A1815] flex items-center space-x-4 shadow-md hover:border-gray-500 transition-colors">
+                    <div key={i} className="border border-gray-700 rounded-lg p-3 md:p-4 flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6 bg-[#1A1815] shadow-md hover:border-gray-500 transition-colors">
                         <div className="w-28 h-28 bg-gray-800/80 rounded-lg border border-gray-600/50 flex-shrink-0 flex items-center justify-center neu-plastic-inset p-1">
                             <PokemonSprite 
                                 species={p.species} 
-                                alt={p.nickname || p.species.toString()} 
+                                alt={getDisplayName(p.nickname, p.species)} 
                                 className="w-24 h-24 drop-shadow-md" 
                             />
                         </div>
                         <div className="flex-grow min-w-0">
                             <div className="flex items-center space-x-3 mb-2 flex-wrap gap-1">
-                                <span className="font-bold text-base md:text-lg font-mono truncate">{p.nickname || `Species ${p.species}`}</span>
+                                <span className="font-bold text-base md:text-lg font-mono truncate">{getDisplayName(p.nickname, p.species)}</span>
                                 <span className="text-gray-400 text-xs md:text-sm font-mono">Lv.{p.metLevel}</span>
                                 <VerdictBadge tier={p.verdict?.tier || 'VERIFIED'} />
                             </div>
