@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { SaveFile } from '../parser/types';
-import { GhostRecord } from '../parser/ghosts';
-import { JourneyEvent } from '../parser/timeline';
+import { SaveFile } from './parser/types';
+import { GhostRecord } from './parser/ghosts';
+import { JourneyEvent } from './parser/timeline';
 
 export type Screen = 'DROP' | 'SCANNING' | 'DASHBOARD' | 'BOXES' | 'GHOSTS' | 'LEGITIMACY' | 'JOURNEY';
 

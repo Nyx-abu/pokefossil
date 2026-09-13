@@ -1,6 +1,6 @@
 import { calculateSectionChecksum } from './checksum';
 import { decodeString } from './charset';
-import { SaveFile, SaveBlock, Section, TrainerInfo, PokemonBox } from './types';
+import { SaveFile, SaveBlock, Section, TrainerInfo, PokemonBox, Pokemon } from './types';
 import { parsePokemon } from './pokemon';
 import { performForensics } from './forensics';
 
@@ -95,7 +95,8 @@ export function parseSaveFile(buffer: ArrayBuffer): SaveFile {
         activeBlock,
         inactiveBlock,
         trainerInfo: parseTrainerInfo(activeBlock.sections[0].data),
-        pokemonBoxes: activeBoxes
+        pokemonBoxes: activeBoxes,
+        inactivePokemonBoxes: inactiveBoxes
     };
 }
 
