@@ -63,20 +63,12 @@ export const DropZone: React.FC = () => {
 
     return (
         <div 
-            className="flex flex-col items-center justify-center h-full w-full relative z-20"
+            className="flex flex-col items-center justify-center h-full w-full absolute inset-0 z-20"
             onDrop={onDrop}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
         >
-            <div className="mb-10 text-center animate-fade-in">
-                <div className="w-20 h-20 md:w-32 md:h-32 bg-red-600 rounded-full mx-auto border-4 border-white shadow-[0_0_30px_rgba(220,38,38,0.6)] mb-6 flex items-center justify-center">
-                    <div className="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full"></div>
-                </div>
-                <h1 className="text-3xl md:text-5xl font-bold tracking-widest text-white mb-2">POKEFOSSIL</h1>
-                <p className="text-gray-400 font-mono text-sm md:text-base tracking-widest">SAVE DATA TIME CAPSULE</p>
-            </div>
-
-            <div className={`w-full max-w-2xl border-4 border-dashed rounded-xl p-8 md:p-12 text-center transition-all flex flex-col items-center justify-center cursor-pointer relative shadow-lg ${isHovering ? 'border-red-500 bg-red-900/10 scale-105' : 'border-gray-700 bg-gray-900/50 hover:border-gray-500'}`}>
+            <div className={`w-full max-w-2xl p-16 text-center transition-all duration-700 flex flex-col items-center justify-center cursor-pointer ${isHovering ? 'scale-105 opacity-100' : 'opacity-80 hover:opacity-100'}`}>
                 <input 
                     type="file" 
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
@@ -87,14 +79,23 @@ export const DropZone: React.FC = () => {
                         }
                     }}
                 />
-                <div className="text-xl md:text-2xl mb-4 font-bold text-white tracking-widest">Drop a .sav file</div>
-                <div className="text-sm md:text-base text-gray-400 font-mono">or click to browse</div>
+                
+                <h1 className="text-4xl md:text-5xl font-serif text-[#3a3532] mb-6 tracking-tight">
+                    PokéFossil
+                </h1>
+                
+                <div className="text-xl md:text-2xl text-[#3a3532] font-serif font-light mb-2">
+                    Provide the save file.
+                </div>
+                <div className="text-sm md:text-base text-gray-500 font-serif italic">
+                    .sav (128KB)
+                </div>
+                
+                {error && <p className="text-[#a04949] font-serif mt-8 p-4 bg-[#a04949]/10 rounded">{error}</p>}
             </div>
 
-            <div className="mt-8 text-center text-gray-400 font-mono">
-                <p className="text-xs md:text-sm">Runs entirely in your browser. Nothing is uploaded.</p>
-                <p className="text-[10px] md:text-xs mt-2 text-gray-500">Supports: Ruby • Sapphire • Emerald • FireRed • LeafGreen</p>
-                {error && <p className="text-red-400 font-bold mt-4 bg-red-900/40 border border-red-500 p-2 rounded max-w-md mx-auto">{error}</p>}
+            <div className="absolute bottom-8 text-center text-gray-400 font-serif text-sm">
+                <p>Everything stays on your device. Nothing leaves the browser.</p>
             </div>
         </div>
     );

@@ -4,65 +4,45 @@ import { GhostRecord } from '../parser/ghosts';
 
 describe('Homecoming Narrative Flow Logic', () => {
     const createMockPokemon = (overrides: Partial<Pokemon> = {}): Pokemon => ({
-        personality: 123456,
-        otId: 99999,
+        pid: 123456,
+        otid: 99999,
         nickname: 'TREECKO',
         language: 2,
-        isEgg: false,
+        isBadEgg: false,
+        hasSpecies: true,
         otName: 'ASH',
-        markings: 0,
         checksum: 100,
+        calculatedChecksum: 100,
         species: 277, // Gen 3 Treecko internal ID
         heldItem: 0,
         experience: 125,
-        ppBonuses: 0,
         friendship: 70,
         moves: [1, 0, 0, 0],
-        pp: [35, 0, 0, 0],
-        hpEv: 0,
-        attackEv: 0,
-        defenseEv: 0,
-        speedEv: 0,
-        spAtkEv: 0,
-        spDefEv: 0,
-        coolStat: 0,
-        beautyStat: 0,
-        cuteStat: 0,
-        smartStat: 0,
-        toughStat: 0,
-        sheen: 0,
-        pokerus: 0,
-        metLocation: 1,
+        movePps: [35, 0, 0, 0],
+        evs: [0, 0, 0, 0, 0, 0],
+        ivs: [15, 15, 15, 15, 15, 15],
+        isEgg: false,
+        abilitySlot: 0,
         metLevel: 5,
         gameOfOrigin: 3, // Emerald
         pokeBall: 4,
-        otGender: 0,
-        hpIv: 15,
-        attackIv: 15,
-        defenseIv: 15,
-        speedIv: 15,
-        spAtkIv: 15,
-        spDefIv: 15,
-        abilityNum: 0,
-        ribbons: 0,
         ...overrides,
     });
 
     const createMockSave = (hours: number, minutes: number = 24, saveCount: number = 42): SaveFile => {
         const activeBlock = {
+            isValid: true,
             saveIndex: saveCount,
-            sections: [{ id: 0, checksum: 0, valid: true, data: new Uint8Array(), footer: { saveIndex: saveCount, sectionId: 0, checksum: 0, signature: 0 } }],
-            gameCode: 0,
-            securityKey: 0,
+            sections: {},
+        };
+        const inactiveBlock = {
+            isValid: true,
+            saveIndex: saveCount > 1 ? saveCount - 1 : 1,
+            sections: {},
         };
         return {
             activeBlock,
-            inactiveBlock: {
-                saveIndex: saveCount > 1 ? saveCount - 1 : 1,
-                sections: [],
-                gameCode: 0,
-                securityKey: 0,
-            },
+            inactiveBlock,
             trainerInfo: {
                 playerName: 'Brendan',
                 gender: 0,
@@ -70,10 +50,11 @@ describe('Homecoming Narrative Flow Logic', () => {
                 secretId: 54321,
                 playTime: { hours, minutes, seconds: 12, frames: 0 },
                 securityKey: 0x1234,
+                money: 5000,
             },
             party: [createMockPokemon()],
             pokemonBoxes: [],
-            gameCode: 'BPEE',
+            inactivePokemonBoxes: [],
         };
     };
 
