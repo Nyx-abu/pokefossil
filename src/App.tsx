@@ -18,18 +18,13 @@ function App() {
     : lastPressed;
 
   return (
-    <div className="min-h-screen p-4 md:p-8 flex items-center justify-center bg-[#d0d5df] overflow-hidden">
+    <div className="min-h-screen p-2 sm:p-4 md:p-8 flex items-center justify-center bg-[#d0d5df] overflow-x-hidden overflow-y-auto">
       
       {/* The GBA Plastic Shell - Responsive: Vertical on mobile, Horizontal on desktop */}
-      <div className="neu-plastic rounded-[40px] md:rounded-[60px] p-6 md:p-10 w-full max-w-sm md:max-w-6xl shadow-2xl relative flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
-        
-        {/* Subtle physical branding */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 text-gray-400 font-bold tracking-widest text-sm opacity-50 select-none whitespace-nowrap">
-          NINTENDO GAME BOY ADVANCE
-        </div>
+      <div className="neu-plastic rounded-[28px] sm:rounded-[40px] md:rounded-[60px] p-3 sm:p-6 md:p-10 w-full max-w-xl md:max-w-6xl shadow-2xl relative flex flex-col md:flex-row items-center justify-center gap-3 sm:gap-6 md:gap-12">
 
         {/* Desktop Left Controls (D-PAD) - Hidden on mobile, shown on md */}
-        <div className="hidden md:flex flex-col items-center justify-center w-48 relative mt-12">
+        <div className="hidden md:flex flex-col items-center justify-center w-48 relative">
           <DPad size="lg" getButtonProps={getButtonProps} />
           
           {/* Start / Select */}
@@ -54,9 +49,9 @@ function App() {
         </div>
 
         {/* Center: The Screen Bezel */}
-        <div className="neu-screen-bezel mt-12 md:mt-12 w-full max-w-3xl flex flex-col relative z-10 border-t-4 border-l-4 border-r-2 border-b-2 border-gray-900/40">
-          <div className="flex justify-between items-center text-gray-400 text-[10px] font-bold mb-2 tracking-widest select-none">
-            <div className="flex items-center gap-4">
+        <div className="neu-screen-bezel w-full max-w-3xl flex flex-col relative z-10 border-t-4 border-l-4 border-r-2 border-b-2 border-gray-900/40 p-2.5 sm:p-4">
+          <div className="flex justify-between items-center text-gray-400 text-[10px] font-bold mb-1.5 sm:mb-2 tracking-widest select-none">
+            <div className="flex items-center gap-2 sm:gap-4">
               <button
                 type="button"
                 onClick={toggleSound}
@@ -74,7 +69,7 @@ function App() {
           </div>
           
           {/* The LCD Screen */}
-          <div className="neu-screen w-full aspect-[3/2] p-4 flex flex-col border border-black/80">
+          <div className="neu-screen w-full aspect-[3/2] p-2.5 sm:p-4 flex flex-col border border-black/80">
             {currentScreen === 'DROP' && <DropZone />}
             {currentScreen === 'DASHBOARD' && <Dashboard />}
             {currentScreen === 'BOXES' && <BoxExplorer />}
@@ -83,13 +78,13 @@ function App() {
             {currentScreen === 'JOURNEY' && <JourneyEstimate />}
           </div>
           
-          <div className="text-center text-gray-300 font-bold text-xl md:text-2xl mt-4 mb-2 tracking-[0.3em] select-none text-shadow-sm">
-            POKÉFOSSIL
+          <div className="text-center text-gray-300 font-bold text-sm sm:text-lg md:text-2xl mt-2.5 sm:mt-3 md:mt-4 mb-1 md:mb-2 tracking-[0.3em] select-none text-shadow-sm">
+            POKEFOSSIL
           </div>
         </div>
 
         {/* Desktop Right Controls (A/B) - Hidden on mobile */}
-        <div className="hidden md:flex flex-col items-center justify-center w-48 relative mt-12">
+        <div className="hidden md:flex flex-col items-center justify-center w-48 relative">
           <div className="flex space-x-6 transform -rotate-12">
             <div className="flex flex-col items-center mt-12">
               <button
@@ -113,26 +108,26 @@ function App() {
         </div>
 
         {/* Mobile-Only Controls (D-pad & Buttons beneath the screen) */}
-        <div className="flex md:hidden justify-between items-center w-full mt-4 px-4">
+        <div className="flex md:hidden justify-between items-center w-full max-w-sm px-2 sm:px-4 mt-1 sm:mt-2">
           {/* D-Pad */}
-          <DPad size="md" getButtonProps={getButtonProps} />
+          <DPad size="md" className="scale-90 sm:scale-100 origin-center" getButtonProps={getButtonProps} />
 
           {/* A / B Buttons */}
-          <div className="flex space-x-4 transform -rotate-12">
-            <div className="flex flex-col items-center mt-8">
+          <div className="flex space-x-3 sm:space-x-4 transform -rotate-12 scale-90 sm:scale-100 origin-center">
+            <div className="flex flex-col items-center mt-5 sm:mt-6">
               <button
                 type="button"
                 {...getButtonProps('B')}
-                className="w-12 h-12 neu-button-red text-lg font-bold focus:outline-none"
+                className="w-11 h-11 sm:w-12 sm:h-12 neu-button-red text-base sm:text-lg font-bold focus:outline-none"
               >
                 B
               </button>
             </div>
-            <div className="flex flex-col items-center mb-8">
+            <div className="flex flex-col items-center mb-5 sm:mb-6">
               <button
                 type="button"
                 {...getButtonProps('A')}
-                className="w-12 h-12 neu-button-red text-lg font-bold focus:outline-none"
+                className="w-11 h-11 sm:w-12 sm:h-12 neu-button-red text-base sm:text-lg font-bold focus:outline-none"
               >
                 A
               </button>
@@ -141,7 +136,7 @@ function App() {
         </div>
         
         {/* Mobile-Only Start/Select */}
-        <div className="flex md:hidden space-x-6 justify-center w-full mt-6 mb-2">
+        <div className="flex md:hidden space-x-6 justify-center w-full mt-1 sm:mt-2 mb-1">
           <div className="flex flex-col items-center">
             <button
               type="button"

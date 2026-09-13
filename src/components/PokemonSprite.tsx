@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getNationalDexId } from '../utils/speciesMapping';
 
 /**
  * High-definition pixel-art SVG data URI of MissingNo / glitch block fallback.
@@ -20,9 +21,11 @@ export const PokemonSprite: React.FC<PokemonSpriteProps> = ({
     onError,
     ...rest
 }) => {
-    const isValid = typeof species === 'number' && !isNaN(species) && species > 0 && species <= 1025;
+    const nationalId = typeof species === 'number' && !isNaN(species) ? getNationalDexId(species) : 0;
+    const isValid = nationalId > 0 && nationalId <= 1025;
+    
     const defaultUrl = isValid
-        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${species}.png`
+        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nationalId}.png`
         : fallbackSrc;
 
     const [imgSrc, setImgSrc] = useState<string>(defaultUrl);
@@ -30,13 +33,13 @@ export const PokemonSprite: React.FC<PokemonSpriteProps> = ({
 
     useEffect(() => {
         if (isValid) {
-            setImgSrc(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${species}.png`);
+            setImgSrc(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nationalId}.png`);
             setHasFailed(false);
         } else {
             setImgSrc(fallbackSrc);
             setHasFailed(true);
         }
-    }, [species, isValid, fallbackSrc]);
+    }, [nationalId, isValid, fallbackSrc]);
 
     const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
         if (!hasFailed) {
@@ -48,7 +51,7 @@ export const PokemonSprite: React.FC<PokemonSpriteProps> = ({
         }
     };
 
-    const resolvedAlt = alt || (isValid ? `Pokemon #${species}` : 'MissingNo');
+    const resolvedAlt = alt || (isValid ? `Pokemon #${nationalId}` : 'MissingNo');
 
     return (
         <img
