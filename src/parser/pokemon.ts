@@ -15,16 +15,12 @@ export function parsePokemon(data: Uint8Array, isParty: boolean = false): Pokemo
     const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
     const pid = view.getUint32(0x00, true);
     const otidFull = view.getUint32(0x04, true);
-    const speciesBasic = view.getUint16(0x20, true); // We'll extract real species from decrypted, this is just to check empty
-    
-    // §3.8 Detecting Empty Slots
-    if (pid === 0 && speciesBasic === 0) {
-        let allZero = true;
-        for (let i = 0; i < 80; i++) {
-            if (data[i] !== 0) { allZero = false; break; }
-        }
-        if (allZero) return null;
+    // §3.8 Detecting Empty Slots (fast path: all 80 bytes are 0x00)
+    let allZero = true;
+    for (let i = 0; i < 80; i++) {
+        if (data[i] !== 0) { allZero = false; break; }
     }
+    if (allZero) return null;
 
     const nickname = decodeString(data.subarray(0x08, 0x12));
     const language = data[0x12];
@@ -103,6 +99,11 @@ export function parsePokemon(data: Uint8Array, isParty: boolean = false): Pokemo
             isEgg = ((ivEggAbility >>> 30) & 1) !== 0;
             abilitySlot = (ivEggAbility >>> 31) & 1;
         }
+    }
+
+    // §3.8: A box slot is empty if PID==0 AND Species==0, or species is 0 (SPECIES_NONE)
+    if (species === 0) {
+        return null;
     }
 
     return {

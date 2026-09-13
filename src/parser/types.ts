@@ -22,6 +22,7 @@ export interface SaveFile {
     inactiveBlock: SaveBlock | null;
     trainerInfo: TrainerInfo;
     pokemonBoxes: PokemonBox[];
+    inactivePokemonBoxes: PokemonBox[];
 }
 
 export interface TrainerInfo {
