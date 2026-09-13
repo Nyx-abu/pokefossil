@@ -1,40 +1,93 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap');
 @import "tailwindcss";
 
+:root {
+  /* Minimalist "Aged Photo Album" Color Palette */
+  --background: #f4f1ea;
+  --bg-primary: #f4f1ea;
+  --bg-paper: #f4f1ea;
+  --primary-text: #3a3532;
+  --text-primary: #3a3532;
+  --text-charcoal: #3a3532;
+  --accent: #c19b6c;
+  --accent-gold: #c19b6c;
+  --accent-brass: #c19b6c;
+  --color-accent: #c19b6c;
+
+  /* Verdict indicators */
+  --color-verdict-verified: #5d7e5d;
+  --color-verdict-uncertain: #c19b6c;
+  --color-verdict-modified: #a04949;
+  --color-verdict-ghost: #9c88e0;
+}
+
 @theme {
-  --color-brand-accent: #e04038; /* FireRed red */
-  --color-verdict-verified: #48c058;
-  --color-verdict-uncertain: #f8b820;
-  --color-verdict-modified: #f84030;
+  --font-serif: 'Lora', Georgia, serif;
+  --color-brand-accent: #c19b6c; /* Muted warm gold/brass */
+  --color-verdict-verified: #5d7e5d; /* Muted green */
+  --color-verdict-uncertain: #c19b6c; /* Muted gold */
+  --color-verdict-modified: #a04949; /* Muted red */
   --color-verdict-ghost: #9c88e0;
 }
 
 @layer base {
   body {
-    background-color: #0a0f18;
-    color: #eef2f7;
-    font-family: "Press Start 2P", monospace;
+    background-color: var(--background, #f4f1ea);
+    color: var(--primary-text, #3a3532);
+    font-family: 'Lora', Georgia, serif; /* Narrative prose default */
+    overflow-x: hidden;
   }
 }
 
 @layer utilities {
-  .font-pixel {
-    font-family: 'Press Start 2P', monospace;
+  .font-raw-data {
+    font-family: 'Press Start 2P', 'Silkscreen', monospace;
+    font-size: 0.9em;
     image-rendering: pixelated;
     -webkit-font-smoothing: none;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  .font-dialog {
-    font-family: 'Silkscreen', 'Press Start 2P', monospace;
+  .font-serif {
+    font-family: 'Lora', Georgia, serif;
   }
 
+  .cross-fade-up {
+    animation: crossFadeUp 1s ease-out forwards;
+  }
+
+  .cross-fade-up-delay-1 {
+    opacity: 0;
+    animation: crossFadeUp 1s ease-out 0.5s forwards;
+  }
+
+  .cross-fade-up-delay-2 {
+    opacity: 0;
+    animation: crossFadeUp 1s ease-out 1s forwards;
+  }
+
+  /* Utility for sprites to stay crisp */
+  .pixelated {
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* For Explore mode */
+  .explore-tab {
+    @apply px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-900 border-b-2 border-transparent transition-colors;
+  }
+  .explore-tab.active {
+    @apply border-[#c19b6c] text-[#3a3532];
+  }
+
+  /* Scrollbar utilities */
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
   .scrollbar-none {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -42,14 +95,14 @@
     height: 6px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.05);
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.2);
+    background: rgba(58, 53, 50, 0.2);
     border-radius: 3px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,0.4);
+    background: rgba(58, 53, 50, 0.4);
   }
 
   .animate-fade-in {
@@ -58,14 +111,6 @@
 
   .animate-slide-in {
     animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .pokemon-dialog-box {
-    border: 4px solid #333;
-    background: #f8f8f8;
-    color: #333;
-    border-radius: 8px;
-    box-shadow: inset -2px -2px 0px rgba(0,0,0,0.1), inset 2px 2px 0px rgba(255,255,255,0.5);
   }
 }
 
@@ -78,3 +123,26 @@
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
+
+@keyframes crossFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cross-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
