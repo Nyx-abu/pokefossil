@@ -1,6 +1,8 @@
 import { calculateSectionChecksum } from './checksum';
 import { decodeString } from './charset';
-import { SaveFile, SaveBlock, Section, TrainerInfo } from './types';
+import { SaveFile, SaveBlock, Section, TrainerInfo, PokemonBox } from './types';
+import { parsePokemon } from './pokemon';
+import { performForensics } from './forensics';
 
 const DATA_SIZE_FOR_ID: Record<number, number> = {
     0: 3884, 1: 3968, 2: 3968, 3: 3968, 4: 3848,
@@ -86,12 +88,55 @@ export function parseSaveFile(buffer: ArrayBuffer): SaveFile {
         }
     }
 
+    const activeBoxes = extractBoxes(activeBlock);
+    const inactiveBoxes = inactiveBlock ? extractBoxes(inactiveBlock) : [];
+
     return {
         activeBlock,
         inactiveBlock,
         trainerInfo: parseTrainerInfo(activeBlock.sections[0].data),
-        pokemonBoxes: [] // TODO
+        pokemonBoxes: activeBoxes
     };
+}
+
+export function extractBoxes(block: SaveBlock): PokemonBox[] {
+    // Concatenate sections 5-13
+    const buffer = new Uint8Array(33744);
+    let offset = 0;
+    for (let i = 5; i <= 13; i++) {
+        const sec = block.sections[i];
+        if (!sec) return []; // Incomplete block (should be handled by evaluateBlock though)
+        buffer.set(sec.data.subarray(0, i === 13 ? 2000 : 3968), offset);
+        offset += (i === 13 ? 2000 : 3968);
+    }
+    
+    // Parse boxes
+    // Offset 0x0004 -> 420 * 80 bytes
+    // Box names at 0x8344
+    const listOffset = 0x0004;
+    const namesOffset = 0x8344;
+    
+    const boxes: PokemonBox[] = [];
+    for (let b = 0; b < 14; b++) {
+        const boxNameData = buffer.subarray(namesOffset + b * 9, namesOffset + b * 9 + 9);
+        const name = decodeString(boxNameData);
+        
+        const pokemonList: (Pokemon | null)[] = [];
+        for (let p = 0; p < 30; p++) {
+            const index = b * 30 + p;
+            const pokeData = buffer.subarray(listOffset + index * 80, listOffset + (index + 1) * 80);
+            const pkmn = parsePokemon(pokeData, false);
+            if (pkmn) {
+                // Determine forensics
+                pkmn.verdict = performForensics(pkmn);
+            }
+            pokemonList.push(pkmn);
+        }
+        
+        boxes.push({ name, pokemon: pokemonList as any }); // Update types.ts to accept null
+    }
+    
+    return boxes;
 }
 
 function parseTrainerInfo(sectionData: Uint8Array): TrainerInfo {

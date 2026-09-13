@@ -35,7 +35,7 @@ export interface TrainerInfo {
 
 export interface PokemonBox {
     name: string;
-    pokemon: Pokemon[];
+    pokemon: (Pokemon | null)[];
 }
 
 export type VerdictTier = 'VERIFIED' | 'UNCERTAIN' | 'LIKELY_MODIFIED' | 'INVALID';
