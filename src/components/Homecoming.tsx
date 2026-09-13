@@ -164,9 +164,9 @@ export const Homecoming: React.FC<HomecomingProps> = ({
             case 3:
                 return { title: 'Pokémon Emerald', year: 2004, region: 'Hoenn', startingTown: 'Littleroot Town', firstBadgeLocation: 'Rustboro City', trainerSprite: trainerGender === 1 ? 'may' : 'brendan' };
             case 4:
-                return { title: 'Pokémon FireRed', year: 2004, region: 'Kanto', startingTown: 'Pallet Town', firstBadgeLocation: 'Pewter City', trainerSprite: trainerGender === 1 ? 'leaf' : 'red' };
+                return { title: 'Pokémon FireRed', year: 2004, region: 'Kanto', startingTown: 'Pallet Town', firstBadgeLocation: 'Pewter City', trainerSprite: trainerGender === 1 ? 'leaf-gen3' : 'red' };
             case 5:
-                return { title: 'Pokémon LeafGreen', year: 2004, region: 'Kanto', startingTown: 'Pallet Town', firstBadgeLocation: 'Pewter City', trainerSprite: trainerGender === 1 ? 'leaf' : 'red' };
+                return { title: 'Pokémon LeafGreen', year: 2004, region: 'Kanto', startingTown: 'Pallet Town', firstBadgeLocation: 'Pewter City', trainerSprite: trainerGender === 1 ? 'leaf-gen3' : 'red' };
             default:
                 return { title: 'Pokémon Emerald', year: 2004, region: 'Hoenn', startingTown: 'Littleroot Town', firstBadgeLocation: 'Rustboro City', trainerSprite: trainerGender === 1 ? 'may' : 'brendan' };
         }
@@ -394,7 +394,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                 className="w-full bg-[#fffefb] border border-[#dfd8ca] rounded-lg p-4 sm:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
                             >
                                 {party.length > 0 ? (
-                                    <div className="flex flex-wrap items-end justify-center gap-4 sm:gap-6 md:gap-8">
+                                    <div className="flex flex-nowrap items-end justify-center gap-2 sm:gap-4 md:gap-6 w-full overflow-x-auto pb-2 scrollbar-none">
                                         {party.map((mon, idx) => {
                                             const natId = getNationalDexId(mon.species);
                                             const speciesName = getPokemonName(natId);
