@@ -1,95 +1,164 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../store';
-import { useControlsStore } from '../controlsStore';
 import { Pokemon } from '../parser/types';
 import { PokemonSprite } from './PokemonSprite';
 import { getDisplayName } from '../utils/pokemonNames';
 
 export const BoxExplorer: React.FC = () => {
-    const { saveFile, setScreen } = useStore();
+    const { saveFile } = useStore();
     const [selectedBox, setSelectedBox] = useState(0);
-
-    useEffect(() => {
-        if (!saveFile) return;
-        const totalBoxes = saveFile.pokemonBoxes.length;
-        const unsubscribe = useControlsStore.getState().addListener((button) => {
-            if (button === 'LEFT') {
-                setSelectedBox((prev) => (prev > 0 ? prev - 1 : totalBoxes - 1));
-            } else if (button === 'RIGHT') {
-                setSelectedBox((prev) => (prev < totalBoxes - 1 ? prev + 1 : 0));
-            } else if (button === 'B') {
-                setScreen('DASHBOARD');
-            }
-        });
-        return unsubscribe;
-    }, [saveFile, setScreen]);
+    const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
 
     if (!saveFile) return null;
 
+    const totalBoxes = saveFile.pokemonBoxes.length;
     const currentBox = saveFile.pokemonBoxes[selectedBox];
 
     return (
-        <div className="flex flex-col h-full overflow-hidden">
-            <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-3 flex-shrink-0">
-                <button onClick={() => setScreen('DASHBOARD')} className="text-[var(--color-brand-accent)] hover:underline text-sm font-mono">&larr; Back to Dashboard</button>
-                <h1 className="text-lg md:text-xl font-bold font-mono">Box Explorer</h1>
-            </div>
+        <div className="flex h-full animate-fade-in relative">
+            <div className={`flex flex-col w-full transition-all duration-300 ${selectedPokemon ? 'md:w-2/3 pr-4' : 'w-full'}`}>
+                {/* Header */}
+                <div className="flex justify-between items-center border-b border-gray-800 pb-4 mb-6 shrink-0">
+                    <h1 className="text-2xl md:text-3xl font-bold font-mono text-white tracking-widest">PC STORAGE</h1>
+                    
+                    <div className="flex items-center space-x-4 bg-gray-900/80 p-2 rounded-lg border border-gray-800 shadow-md">
+                        <button 
+                            onClick={() => setSelectedBox((prev) => (prev > 0 ? prev - 1 : totalBoxes - 1))}
+                            className="p-2 bg-gray-800 rounded hover:bg-red-600/80 hover:text-white transition-colors text-gray-400"
+                        >
+                            &larr;
+                        </button>
+                        <span className="font-mono text-sm md:text-base font-bold text-white min-w-[8rem] text-center">
+                            BOX {selectedBox + 1}
+                        </span>
+                        <button 
+                            onClick={() => setSelectedBox((prev) => (prev < totalBoxes - 1 ? prev + 1 : 0))}
+                            className="p-2 bg-gray-800 rounded hover:bg-red-600/80 hover:text-white transition-colors text-gray-400"
+                        >
+                            &rarr;
+                        </button>
+                    </div>
+                </div>
 
-            <div className="flex space-x-2 overflow-x-auto pb-3 mb-3 scrollbar-thin flex-shrink-0">
-                {saveFile.pokemonBoxes.map((box, i) => (
-                    <button 
-                        key={i} 
-                        onClick={() => setSelectedBox(i)}
-                        className={`px-3 py-1.5 rounded text-xs md:text-sm font-mono whitespace-nowrap transition-colors ${selectedBox === i ? 'bg-[var(--color-brand-accent)] text-white font-bold shadow-md' : 'bg-gray-800 hover:bg-gray-700 text-gray-300'}`}
-                    >
-                        {box.name}
-                    </button>
-                ))}
-            </div>
-
-            <div className="flex-grow flex items-center justify-center min-h-0 overflow-y-auto w-full p-1">
-                <div className="bg-[#1A1815] border border-gray-700 p-3 sm:p-5 rounded-lg max-h-full overflow-y-auto scrollbar-thin shadow-inner">
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
-                        {currentBox.pokemon.map((p, i) => (
-                            <PokemonSlot key={i} pokemon={p} />
-                        ))}
+                {/* Box Grid */}
+                <div className="flex-grow flex flex-col items-center min-h-0 overflow-y-auto w-full">
+                    <div className="bg-[#131924] border border-gray-800 p-4 sm:p-8 rounded-xl shadow-2xl w-full max-w-4xl mx-auto backdrop-blur-sm relative">
+                        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent rounded-xl pointer-events-none"></div>
+                        <div className="grid grid-cols-6 gap-2 sm:gap-4 relative z-10">
+                            {currentBox.pokemon.map((p, i) => (
+                                <PokemonSlot 
+                                    key={i} 
+                                    pokemon={p} 
+                                    isSelected={selectedPokemon === p}
+                                    onClick={() => p && setSelectedPokemon(p)} 
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
+
+            {/* Slide-out Stats Panel */}
+            {selectedPokemon && (
+                <div className="hidden md:flex flex-col w-1/3 bg-[#0a0f18] border-l border-gray-800 p-6 shadow-2xl absolute right-0 top-0 bottom-0 overflow-y-auto animate-slide-in">
+                    <div className="flex justify-between items-start mb-6 border-b border-gray-800 pb-4">
+                        <h2 className="text-xl font-bold font-mono text-white">DATA ENTRY</h2>
+                        <button onClick={() => setSelectedPokemon(null)} className="text-gray-500 hover:text-white">&times;</button>
+                    </div>
+                    
+                    <div className="flex flex-col items-center bg-gray-900/50 rounded-xl p-4 border border-gray-800 mb-6">
+                        <PokemonSprite species={selectedPokemon.species} alt="Sprite" className="w-32 h-32 object-contain drop-shadow-xl" />
+                        <span className="text-xl font-bold font-mono text-white mt-4">{getDisplayName(selectedPokemon.nickname, selectedPokemon.species)}</span>
+                        <span className="text-sm font-mono text-gray-400 mt-1">Level {selectedPokemon.metLevel}</span>
+                    </div>
+
+                    <div className="space-y-6 font-mono text-sm">
+                        <div className="bg-[#131924] p-4 rounded-lg border border-gray-800">
+                            <h3 className="text-gray-500 text-xs mb-3 border-b border-gray-800 pb-1">GENETICS & EFFORT (IV / EV)</h3>
+                            <div className="space-y-2 text-xs font-mono">
+                                {[
+                                    { label: 'HP', iv: selectedPokemon.ivs[0], ev: selectedPokemon.evs[0], color: 'bg-green-500' },
+                                    { label: 'ATK', iv: selectedPokemon.ivs[1], ev: selectedPokemon.evs[1], color: 'bg-red-500' },
+                                    { label: 'DEF', iv: selectedPokemon.ivs[2], ev: selectedPokemon.evs[2], color: 'bg-orange-500' },
+                                    { label: 'SPE', iv: selectedPokemon.ivs[3], ev: selectedPokemon.evs[3], color: 'bg-pink-500' },
+                                    { label: 'SPA', iv: selectedPokemon.ivs[4], ev: selectedPokemon.evs[4], color: 'bg-blue-500' },
+                                    { label: 'SPD', iv: selectedPokemon.ivs[5], ev: selectedPokemon.evs[5], color: 'bg-purple-500' }
+                                ].map((stat) => (
+                                    <div key={stat.label} className="flex items-center gap-2">
+                                        <span className="text-gray-500 w-8">{stat.label}</span>
+                                        <div className="flex-1 bg-gray-900 rounded-full h-2 overflow-hidden flex relative group cursor-crosshair">
+                                            {/* IV Bar (Max 31) */}
+                                            <div className={`${stat.color} h-full opacity-70`} style={{ width: `${(stat.iv / 31) * 100}%` }}></div>
+                                            {/* EV Indicator (Max 255) */}
+                                            {stat.ev > 0 && (
+                                                <div className="absolute top-0 bottom-0 left-0 bg-white/30" style={{ width: `${(stat.ev / 255) * 100}%` }}></div>
+                                            )}
+                                        </div>
+                                        <div className="flex gap-1 text-right w-16">
+                                            <span className="text-gray-300 w-6">{stat.iv}</span>
+                                            <span className="text-gray-600">/</span>
+                                            <span className="text-gray-400 w-6">{stat.ev}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-[#131924] p-4 rounded-lg border border-gray-800">
+                            <h3 className="text-gray-500 text-xs mb-3 border-b border-gray-800 pb-1">ORIGIN</h3>
+                            <div className="grid grid-cols-1 gap-y-2 text-gray-300">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">MET AT:</span> 
+                                    <span>Lv. {selectedPokemon.metLevel}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">OT ID:</span> 
+                                    <span>{selectedPokemon.otid.toString().padStart(5, '0')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            {/* Mobile Modal (Visible only on small screens when a Pokemon is selected) */}
+            {selectedPokemon && (
+                <div className="md:hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+                    <div className="bg-[#0a0f18] border border-gray-800 rounded-xl p-6 shadow-2xl w-full max-w-sm overflow-y-auto max-h-[90vh]">
+                        <div className="flex justify-between items-start mb-6 border-b border-gray-800 pb-4">
+                            <h2 className="text-xl font-bold font-mono text-white">DATA ENTRY</h2>
+                            <button onClick={() => setSelectedPokemon(null)} className="text-gray-500 hover:text-white text-2xl leading-none">&times;</button>
+                        </div>
+                        <div className="flex flex-col items-center bg-gray-900/50 rounded-xl p-4 border border-gray-800 mb-6">
+                            <PokemonSprite species={selectedPokemon.species} alt="Sprite" className="w-32 h-32 object-contain drop-shadow-xl" />
+                            <span className="text-xl font-bold font-mono text-white mt-4">{getDisplayName(selectedPokemon.nickname, selectedPokemon.species)}</span>
+                            <span className="text-sm font-mono text-gray-400 mt-1">Level {selectedPokemon.metLevel}</span>
+                        </div>
+                        <button onClick={() => setSelectedPokemon(null)} className="w-full bg-red-600 text-white font-mono py-3 rounded-lg mt-4">CLOSE</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
-const PokemonSlot: React.FC<{ pokemon: Pokemon | null }> = ({ pokemon }) => {
+const PokemonSlot = ({ pokemon, isSelected, onClick }: { pokemon: Pokemon | null; isSelected: boolean; onClick: () => void }) => {
     if (!pokemon) {
         return (
-            <div className="w-20 h-20 sm:w-24 sm:h-24 border-2 border-dashed border-gray-700/60 rounded-lg flex items-center justify-center bg-gray-900/40 opacity-40">
-                <span className="text-[10px] text-gray-600 font-mono">-</span>
-            </div>
+            <div className="aspect-square bg-black/40 rounded-lg border border-gray-800/50 shadow-inner"></div>
         );
     }
 
-    let dotColor = 'var(--color-verdict-verified)';
-    if (pokemon.verdict?.tier === 'UNCERTAIN') dotColor = 'var(--color-verdict-uncertain)';
-    if (pokemon.verdict?.tier === 'LIKELY_MODIFIED' || pokemon.verdict?.tier === 'INVALID') dotColor = 'var(--color-verdict-modified)';
-
     return (
-        <div className="w-20 h-20 sm:w-24 sm:h-24 border border-gray-700 rounded-lg relative bg-gray-800/80 flex flex-col items-center justify-center cursor-pointer hover:border-[var(--color-brand-accent)] hover:scale-105 transition-all shadow-sm group">
-            <div className="absolute top-1 left-1 text-[9px] font-mono bg-black/70 px-1 rounded text-gray-300 z-10">
-                Lv.{pokemon.metLevel}
-            </div>
+        <div 
+            onClick={onClick}
+            className={`aspect-square bg-gray-800/80 rounded-lg border flex items-center justify-center p-1 cursor-pointer transition-all hover:scale-105 hover:z-10 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] ${isSelected ? 'border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)] bg-red-900/20' : 'border-gray-700'}`}
+        >
             <PokemonSprite 
                 species={pokemon.species} 
-                alt={getDisplayName(pokemon.nickname, pokemon.species)} 
-                className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-md" 
+                alt="sprite"
+                className="w-full h-full object-contain drop-shadow-md" 
             />
-            <div 
-                className="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full shadow-[0_0_4px_currentColor] z-10" 
-                style={{ backgroundColor: dotColor, color: dotColor }}
-            ></div>
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/95 text-white text-[10px] font-mono px-2 py-0.5 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-30 border border-gray-700 shadow-lg">
-                {getDisplayName(pokemon.nickname, pokemon.species)}
-            </div>
         </div>
     );
 };

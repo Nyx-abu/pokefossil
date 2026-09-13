@@ -31,7 +31,7 @@ export const LegitimacyReport: React.FC = () => {
     return (
         <div className="flex flex-col h-full overflow-hidden">
             <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-3 flex-shrink-0">
-                <button onClick={() => setScreen('DASHBOARD')} className="text-[var(--color-brand-accent)] hover:underline text-sm font-mono">&larr; Back to Dashboard</button>
+                
                 <div className="flex items-center space-x-4">
                     <h1 className="text-lg md:text-xl font-bold font-mono">Legitimacy Forensics</h1>
                     <div className="text-xs md:text-sm font-mono flex space-x-2">
@@ -45,7 +45,7 @@ export const LegitimacyReport: React.FC = () => {
             <div className="flex-grow overflow-y-auto pr-1 scrollbar-thin pb-6 space-y-3 min-h-0">
                 {allPokemon.map((p, i) => (
                     <div key={i} className="border border-gray-700 rounded-lg p-3 md:p-4 flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6 bg-[#1A1815] shadow-md hover:border-gray-500 transition-colors">
-                        <div className="w-28 h-28 bg-gray-800/80 rounded-lg border border-gray-600/50 flex-shrink-0 flex items-center justify-center neu-plastic-inset p-1">
+                        <div className="w-28 h-28 bg-gray-800/80 rounded-lg border border-gray-600/50 flex-shrink-0 flex items-center justify-center bg-gray-800/80 shadow-inner border-gray-700 p-1">
                             <PokemonSprite 
                                 species={p.species} 
                                 alt={getDisplayName(p.nickname, p.species)} 

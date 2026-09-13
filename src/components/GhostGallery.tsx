@@ -20,7 +20,7 @@ export const GhostGallery: React.FC = () => {
     return (
         <div className="flex flex-col h-full overflow-hidden">
             <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-3 flex-shrink-0">
-                <button onClick={() => setScreen('DASHBOARD')} className="text-[var(--color-brand-accent)] hover:underline text-sm font-mono">&larr; Back to Dashboard</button>
+                
                 <h1 className="text-lg md:text-xl font-bold font-mono">Ghost Gallery</h1>
             </div>
 
@@ -39,7 +39,7 @@ export const GhostGallery: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto pr-1 scrollbar-thin pb-6 min-h-0 flex-grow">
                     {ghosts.map((g, i) => (
                         <div key={i} className="border border-gray-700 rounded-lg p-3 flex items-center space-x-4 bg-[#1A1815] shadow-md hover:border-gray-500 transition-colors">
-                            <div className="w-28 h-28 bg-gray-800/80 rounded-lg border border-gray-600/50 flex-shrink-0 flex items-center justify-center neu-plastic-inset p-1">
+                            <div className="w-28 h-28 bg-gray-800/80 rounded-lg border border-gray-600/50 flex-shrink-0 flex items-center justify-center bg-gray-800/80 shadow-inner border-gray-700 p-1">
                                 <PokemonSprite 
                                     species={g.pokemon.species} 
                                     alt={getDisplayName(g.pokemon.nickname, g.pokemon.species)} 

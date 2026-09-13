@@ -20,7 +20,7 @@ export const JourneyEstimate: React.FC = () => {
     return (
         <div className="flex flex-col h-full overflow-hidden">
             <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-3 flex-shrink-0">
-                <button onClick={() => setScreen('DASHBOARD')} className="text-[var(--color-brand-accent)] hover:underline text-sm font-mono">&larr; Back to Dashboard</button>
+                
                 <h1 className="text-lg md:text-xl font-bold font-mono">Journey Estimate</h1>
             </div>
 
@@ -43,7 +43,7 @@ export const JourneyEstimate: React.FC = () => {
 
                     {timeline.map((event, i) => (
                         <div key={i} className="flex flex-col items-center justify-center relative group" style={{ opacity: getOpacity(event.confidence) }}>
-                            <div className="w-28 h-28 rounded-lg bg-gray-800/80 border border-gray-700 flex items-center justify-center p-1 mb-2 neu-plastic-inset group-hover:border-[var(--color-brand-accent)] transition-all">
+                            <div className="w-28 h-28 rounded-lg bg-gray-800/80 border border-gray-700 flex items-center justify-center p-1 mb-2 bg-gray-800/80 shadow-inner border-gray-700 group-hover:border-[var(--color-brand-accent)] transition-all">
                                 <PokemonSprite 
                                     species={event.pokemon?.species} 
                                     alt={event.pokemon ? getDisplayName(event.pokemon.nickname, event.pokemon.species) : 'Unknown'} 
