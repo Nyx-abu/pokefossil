@@ -54,8 +54,8 @@ const PokemonSlot: React.FC<{ pokemon: Pokemon | null }> = ({ pokemon }) => {
     return (
         <div className="w-16 h-16 border border-gray-600 rounded-md relative bg-gray-800 flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
             <div className="absolute top-1 left-1 text-[8px] bg-black/50 px-1 rounded">{pokemon.metLevel}</div>
-            <div className="text-xs">{pokemon.species}</div> {/* Placeholder for sprite */}
-            <div className="absolute bottom-1 right-1 w-2 h-2 rounded-full" style={{ backgroundColor: dotColor }}></div>
+            <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.species}.png`} alt={pokemon.species.toString()} className="w-10 h-10 object-contain drop-shadow-md" />
+            <div className="absolute bottom-1 right-1 w-2 h-2 rounded-full shadow-[0_0_4px_currentColor]" style={{ backgroundColor: dotColor, color: dotColor }}></div>
         </div>
     );
 };

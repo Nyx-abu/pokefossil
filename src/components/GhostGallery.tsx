@@ -26,8 +26,8 @@ export const GhostGallery: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4 overflow-y-auto pr-2 scrollbar-thin pb-8">
                     {ghosts.map((g, i) => (
                         <div key={i} className="border border-gray-700 rounded p-4 flex items-start space-x-4 bg-[#1A1815]">
-                            <div className="w-16 h-16 bg-gray-800 rounded border border-gray-600 flex-shrink-0 flex items-center justify-center">
-                                <span className="text-xs text-gray-500">Sprite</span>
+                            <div className="w-16 h-16 bg-gray-800/80 rounded border border-gray-600/50 flex-shrink-0 flex items-center justify-center neu-plastic-inset">
+                                <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${g.pokemon.species}.png`} alt={g.pokemon.species.toString()} className="w-12 h-12 object-contain" />
                             </div>
                             <div>
                                 <div className="flex items-center space-x-2 mb-1">

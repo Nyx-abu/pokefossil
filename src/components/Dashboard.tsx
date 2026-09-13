@@ -52,7 +52,7 @@ export const Dashboard: React.FC = () => {
                 
                 <div className="flex items-center space-x-6">
                     <div className="w-24 h-24 bg-gray-800/80 rounded border-2 border-gray-700 flex-shrink-0 flex items-center justify-center neu-plastic-inset">
-                        <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Sprite</span>
+                        <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png`} alt="Pikachu Logo" className="w-16 h-16 opacity-30 mix-blend-screen" />
                     </div>
                     <div className="space-y-2">
                         <div className="flex text-sm"><span className="w-24 text-gray-400">Trainer:</span> <span className="font-mono">{trainerInfo.playerName} ({trainerInfo.gender === 0 ? 'M' : 'F'})</span></div>
@@ -67,6 +67,7 @@ export const Dashboard: React.FC = () => {
                 <div className="flex space-x-4">
                     {saveFile.party?.map((p, i) => (
                         <div key={i} className="flex-1 bg-gray-800/50 border border-gray-700 rounded-lg p-2 flex flex-col items-center justify-center relative shadow-sm">
+                            <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.species}.png`} alt={p.species.toString()} className="w-12 h-12 object-contain" />
                             <span className="text-xs font-bold font-mono text-center truncate w-full px-1">{p.nickname || '???'}</span>
                             <span className="text-[10px] text-gray-500">Lv.{p.metLevel}</span>
                             <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.verdict?.tier === 'VERIFIED' ? 'var(--color-verdict-verified)' : p.verdict?.tier === 'UNCERTAIN' ? 'var(--color-verdict-uncertain)' : 'var(--color-verdict-modified)' }}></div>

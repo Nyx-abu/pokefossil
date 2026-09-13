@@ -49,20 +49,45 @@ export const DropZone: React.FC = () => {
         reader.readAsArrayBuffer(file);
     }, [setSaveData]);
 
-    const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    const onDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-    };
+        setIsHovering(false);
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            processFile(file);
+        }
+    }, [processFile]);
+
+    const onDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsHovering(true);
+    }, []);
+
+    const onDragLeave = useCallback(() => setIsHovering(false), []);
 
     return (
-        <div className="flex flex-col items-center justify-center h-[80vh]">
+        <div 
+            className="flex flex-col items-center justify-center h-full w-full relative z-20"
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+        >
             <h1 className="text-4xl font-bold mb-8 text-[var(--color-brand-accent)] tracking-widest">POKÉFOSSIL</h1>
             
             <div 
-                onDrop={onDrop}
-                onDragOver={onDragOver}
-                className="w-[600px] h-[300px] border-4 border-dashed border-[var(--color-brand-accent)] rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors duration-300"
+                className={`w-full max-w-2xl border-4 border-dashed rounded-xl p-12 text-center transition-colors flex flex-col items-center justify-center cursor-pointer relative ${isHovering ? 'border-[var(--color-brand-accent)] bg-white/5' : 'border-[var(--color-brand-accent)]/40 hover:border-[var(--color-brand-accent)]'}`}
             >
-                <div className="text-2xl mb-4 font-mono">Drop a .sav file</div>
+                <input 
+                    type="file" 
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                    accept=".sav"
+                    onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                            processFile(e.target.files[0]);
+                        }
+                    }}
+                />
+                <div className="text-2xl mb-4 font-mono text-[var(--color-brand-accent)]">Drop a .sav file</div>
                 <div className="text-gray-400">or click to browse</div>
             </div>
 
