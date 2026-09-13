@@ -84,7 +84,7 @@ export const Dashboard: React.FC = () => {
             <div className="grid grid-cols-4 gap-4 flex-grow">
                 <DashboardTile 
                     title="Population"
-                    count={totalPokemon}
+                    count={totalCount}
                     subtitle="in party + boxes"
                     onClick={() => setScreen('BOXES')}
                 />
@@ -97,17 +97,17 @@ export const Dashboard: React.FC = () => {
                 />
                 <DashboardTile 
                     title="Verified"
-                    count={verified}
+                    count={verifiedCount}
                     subtitle="legitimate"
                     onClick={() => setScreen('LEGITIMACY')}
-                    accentColor={verified > 0 ? 'var(--color-verdict-verified)' : undefined}
+                    accentColor={verifiedCount > 0 ? 'var(--color-verdict-verified)' : undefined}
                 />
                 <DashboardTile 
                     title="Uncertain/Modified"
-                    count={uncertain + modified}
+                    count={uncertainCount + modifiedCount}
                     subtitle="flags found"
                     onClick={() => setScreen('LEGITIMACY')}
-                    accentColor={(uncertain + modified) > 0 ? 'var(--color-verdict-modified)' : undefined}
+                    accentColor={(uncertainCount + modifiedCount) > 0 ? 'var(--color-verdict-modified)' : undefined}
                 />
             </div>
         </div>

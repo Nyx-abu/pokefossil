@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseSaveFile, extractParty, SaveParserError } from './parser';
+import { parseSaveFile, extractParty, parseTrainerInfo, SaveParserError } from './parser';
 import { calculateSectionChecksum } from './checksum';
 import { xorMask32 } from './crypto';
 import { SaveBlock } from './types';
@@ -142,6 +142,114 @@ describe('Save File Parser (§2.1-2.6)', () => {
         expect(parsed.trainerInfo.gender).toBe(0);
         expect(parsed.trainerInfo.trainerId).toBe(12345);
         expect(parsed.trainerInfo.secretId).toBe(54321);
+        expect(parsed.trainerInfo.money).toBe(0);
+        expect(parsed.trainerInfo.securityKey).toBeNull();
+    });
+
+    it('decrypts Money using Emerald Security Key from Section 0 at 0x00AC (Phase 9)', () => {
+        const fullSave = new Uint8Array(131072);
+        const blockA = createValidBlock(1);
+        const sec0 = blockA.subarray(0, 4096);
+        const sec1 = blockA.subarray(4096, 8192);
+        const sec0View = new DataView(sec0.buffer, sec0.byteOffset, sec0.byteLength);
+        const sec1View = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
+
+        const securityKey = 0x5A3C9F12;
+        const expectedMoney = 150000;
+        const rawMoney = (expectedMoney ^ securityKey) >>> 0;
+
+        sec0View.setUint32(0x00AC, securityKey, true);
+        sec1View.setUint32(0x0290, rawMoney, true);
+
+        // Recompute checksums
+        sec0View.setUint16(0x0FF6, calculateSectionChecksum(sec0, DATA_SIZE_FOR_ID[0]), true);
+        sec1View.setUint16(0x0FF6, calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]), true);
+
+        fullSave.set(blockA, 0x00000);
+        const parsed = parseSaveFile(fullSave.buffer);
+
+        expect(parsed.trainerInfo.securityKey).toBe(securityKey);
+        expect(parsed.trainerInfo.money).toBe(expectedMoney);
+    });
+
+    it('decrypts Money using FRLG Security Key from Section 0 at 0x0AF8 with gameCode at 0x00AC (Phase 9)', () => {
+        const fullSave = new Uint8Array(131072);
+        const blockA = createValidBlock(1);
+        const sec0 = blockA.subarray(0, 4096);
+        const sec1 = blockA.subarray(4096, 8192);
+        const sec0View = new DataView(sec0.buffer, sec0.byteOffset, sec0.byteLength);
+        const sec1View = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
+
+        const securityKey = 0x1A2B3C4D;
+        const expectedMoney = 999999;
+        const rawMoney = (expectedMoney ^ securityKey) >>> 0;
+
+        sec0View.setUint32(0x00AC, 1, true); // gameCode == 1 for FRLG
+        sec0View.setUint32(0x0AF8, securityKey, true);
+        sec1View.setUint32(0x0290, rawMoney, true);
+
+        // Recompute checksums
+        sec0View.setUint16(0x0FF6, calculateSectionChecksum(sec0, DATA_SIZE_FOR_ID[0]), true);
+        sec1View.setUint16(0x0FF6, calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]), true);
+
+        fullSave.set(blockA, 0x00000);
+        const parsed = parseSaveFile(fullSave.buffer);
+
+        expect(parsed.trainerInfo.securityKey).toBe(securityKey);
+        expect(parsed.trainerInfo.money).toBe(expectedMoney);
+    });
+
+    it('decrypts Money using FRLG Security Key at 0x0AF8 without gameCode set (Phase 9)', () => {
+        const fullSave = new Uint8Array(131072);
+        const blockA = createValidBlock(1);
+        const sec0 = blockA.subarray(0, 4096);
+        const sec1 = blockA.subarray(4096, 8192);
+        const sec0View = new DataView(sec0.buffer, sec0.byteOffset, sec0.byteLength);
+        const sec1View = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
+
+        const securityKey = 0x0FEDCBA9;
+        const expectedMoney = 42000;
+        const rawMoney = (expectedMoney ^ securityKey) >>> 0;
+
+        sec0View.setUint32(0x0AF8, securityKey, true);
+        sec1View.setUint32(0x0290, rawMoney, true);
+
+        sec0View.setUint16(0x0FF6, calculateSectionChecksum(sec0, DATA_SIZE_FOR_ID[0]), true);
+        sec1View.setUint16(0x0FF6, calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]), true);
+
+        fullSave.set(blockA, 0x00000);
+        const parsed = parseSaveFile(fullSave.buffer);
+
+        expect(parsed.trainerInfo.securityKey).toBe(securityKey);
+        expect(parsed.trainerInfo.money).toBe(expectedMoney);
+    });
+
+    it('parses Ruby/Sapphire saves with securityKey null and unencrypted money (Phase 9)', () => {
+        const fullSave = new Uint8Array(131072);
+        const blockA = createValidBlock(1);
+        const sec0 = blockA.subarray(0, 4096);
+        const sec1 = blockA.subarray(4096, 8192);
+        const sec0View = new DataView(sec0.buffer, sec0.byteOffset, sec0.byteLength);
+        const sec1View = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
+
+        const expectedMoney = 35000;
+        sec1View.setUint32(0x0290, expectedMoney, true);
+
+        sec0View.setUint16(0x0FF6, calculateSectionChecksum(sec0, DATA_SIZE_FOR_ID[0]), true);
+        sec1View.setUint16(0x0FF6, calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]), true);
+
+        fullSave.set(blockA, 0x00000);
+        const parsed = parseSaveFile(fullSave.buffer);
+
+        expect(parsed.trainerInfo.securityKey).toBeNull();
+        expect(parsed.trainerInfo.money).toBe(expectedMoney);
+    });
+
+    it('parseTrainerInfo handles missing or small buffer gracefully', () => {
+        const emptyInfo = parseTrainerInfo(new Uint8Array(0));
+        expect(emptyInfo.securityKey).toBeNull();
+        expect(emptyInfo.money).toBe(0);
+        expect(emptyInfo.playerName).toBe('');
     });
 
     it('returns empty party when party count is 0', () => {

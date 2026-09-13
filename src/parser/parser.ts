@@ -95,7 +95,7 @@ export function parseSaveFile(buffer: ArrayBuffer): SaveFile {
     return {
         activeBlock,
         inactiveBlock,
-        trainerInfo: parseTrainerInfo(activeBlock.sections[0].data),
+        trainerInfo: parseTrainerInfo(activeBlock.sections[0]?.data, activeBlock.sections[1]?.data),
         pokemonBoxes: activeBoxes,
         inactivePokemonBoxes: inactiveBoxes,
         party
@@ -164,30 +164,73 @@ export function extractBoxes(block: SaveBlock): PokemonBox[] {
     return boxes;
 }
 
-function parseTrainerInfo(sectionData: Uint8Array): TrainerInfo {
-    const view = new DataView(sectionData.buffer, sectionData.byteOffset, sectionData.byteLength);
-    const playerName = decodeString(sectionData.subarray(0, 7));
-    const gender = sectionData[8];
-    const trainerIdFull = view.getUint32(0x000A, true);
+export function parseTrainerInfo(section0Data?: Uint8Array, section1Data?: Uint8Array): TrainerInfo {
+    if (!section0Data) {
+        return {
+            playerName: '',
+            gender: 0,
+            trainerId: 0,
+            secretId: 0,
+            playTime: { hours: 0, minutes: 0, seconds: 0, frames: 0 },
+            money: 0,
+            securityKey: null
+        };
+    }
+
+    const view = new DataView(section0Data.buffer, section0Data.byteOffset, section0Data.byteLength);
+    const playerName = decodeString(section0Data.subarray(0, 7));
+    const gender = section0Data[8];
+    const trainerIdFull = section0Data.byteLength >= 0x000E ? view.getUint32(0x000A, true) : 0;
     
     const tid = trainerIdFull & 0xFFFF;
     const sid = (trainerIdFull >>> 16) & 0xFFFF;
 
     const playTime = {
-        hours: view.getUint16(0x000E, true),
-        minutes: sectionData[0x0010],
-        seconds: sectionData[0x0011],
-        frames: sectionData[0x0012]
+        hours: section0Data.byteLength >= 0x0010 ? view.getUint16(0x000E, true) : 0,
+        minutes: section0Data.byteLength > 0x0010 ? section0Data[0x0010] : 0,
+        seconds: section0Data.byteLength > 0x0011 ? section0Data[0x0011] : 0,
+        frames: section0Data.byteLength > 0x0012 ? section0Data[0x0012] : 0
     };
 
-    // Note: Security key offset depends on game, we might need a way to detect the game first.
-    // For now, we'll try to guess if it's Emerald (0x00AC) or FRLG (0x0AF8) later, or extract it based on version flags.
+    // Security Key offset depends on game:
+    // - Emerald stores Security Key at 0x00AC
+    // - FRLG stores gameCode (1) at 0x00AC and Security Key at 0x0AF8
+    // - Ruby/Sapphire does not have it (null / 0)
+    let securityKey: number | null = null;
+    const val0AC = section0Data.byteLength >= 0x00AC + 4 ? view.getUint32(0x00AC, true) : 0;
+    const valAF8 = section0Data.byteLength >= 0x0AF8 + 4 ? view.getUint32(0x0AF8, true) : 0;
+
+    if (val0AC === 1) {
+        // FRLG (gameCode == 1 at 0x00AC) -> Security Key at 0x0AF8
+        securityKey = valAF8;
+    } else if (valAF8 !== 0 && val0AC === 0) {
+        // FRLG (explicit Security Key at 0x0AF8)
+        securityKey = valAF8;
+    } else if (val0AC !== 0) {
+        // Emerald (Security Key at 0x00AC)
+        securityKey = val0AC;
+    } else {
+        // Ruby / Sapphire (does not have a security key)
+        securityKey = null;
+    }
+
+    // Money is stored in Section 1 at 0x0290 (encrypted with Security Key via XOR)
+    // money = rawMoney ^ securityKey
+    let rawMoney = 0;
+    if (section1Data && section1Data.byteLength >= 0x0290 + 4) {
+        const sec1View = new DataView(section1Data.buffer, section1Data.byteOffset, section1Data.byteLength);
+        rawMoney = sec1View.getUint32(0x0290, true);
+    }
+
+    const money = (rawMoney ^ (securityKey ?? 0)) >>> 0;
 
     return {
         playerName,
         gender,
         trainerId: tid,
         secretId: sid,
-        playTime
+        playTime,
+        money,
+        securityKey
     };
 }

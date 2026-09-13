@@ -8,14 +8,10 @@ import { Pokemon } from '../parser/types';
 export const DropZone: React.FC = () => {
     const setSaveData = useStore(state => state.setSaveData);
     const [error, setError] = useState<string | null>(null);
+    const [isHovering, setIsHovering] = useState<boolean>(false);
 
-    const onDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
+    const processFile = useCallback((file: File) => {
         setError(null);
-        
-        const file = e.dataTransfer.files[0];
-        if (!file) return;
-
         if (file.size !== 131072) {
             setError('Invalid file size. Expected exactly 128KB (.sav) file.');
             return;

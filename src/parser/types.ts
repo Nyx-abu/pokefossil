@@ -28,11 +28,17 @@ export interface SaveFile {
 
 export interface TrainerInfo {
     playerName: string;
-    gender: number;
+    gender: number; // 0 = Male, 1 = Female
     trainerId: number;
     secretId: number;
-    playTime: { hours: number; minutes: number; seconds: number; frames: number };
-    securityKey?: number;
+    playTime: {
+        hours: number;
+        minutes: number;
+        seconds: number;
+        frames: number;
+    };
+    securityKey: number | null;
+    money: number | null;
 }
 
 export interface PokemonBox {
