@@ -107,12 +107,33 @@ export function extractParty(block: SaveBlock): Pokemon[] {
     if (!sec1) return [];
 
     const view = new DataView(sec1.data.buffer, sec1.data.byteOffset, sec1.data.byteLength);
-    const rawCount = view.getUint32(0x0034, true);
+    
+    // In Gen 3:
+    // FRLG: Team size is at 0x0034, Pokémon data starts at 0x0038
+    // R/S/E: Team size is at 0x0234, Pokémon data starts at 0x0238
+    const count0034 = sec1.data.byteLength >= 0x0038 ? view.getUint32(0x0034, true) : 0;
+    const count0234 = sec1.data.byteLength >= 0x0238 ? view.getUint32(0x0234, true) : 0;
+
+    let countOffset = 0x0234;
+    let dataOffset = 0x0238;
+
+    if (count0234 > 0 && count0234 <= 6) {
+        countOffset = 0x0234;
+        dataOffset = 0x0238;
+    } else if (count0034 > 0) {
+        countOffset = 0x0034;
+        dataOffset = 0x0038;
+    } else if (count0234 > 6) {
+        countOffset = 0x0234;
+        dataOffset = 0x0238;
+    }
+
+    const rawCount = view.getUint32(countOffset, true);
     const partyCount = Math.min(Math.max(0, rawCount), 6);
 
     const party: Pokemon[] = [];
     for (let i = 0; i < partyCount; i++) {
-        const offset = 0x0038 + i * 100;
+        const offset = dataOffset + i * 100;
         const pokeData = sec1.data.subarray(offset, offset + 100);
         const pkmn = parsePokemon(pokeData, true);
         if (pkmn) {

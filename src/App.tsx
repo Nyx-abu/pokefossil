@@ -1,5 +1,7 @@
 import React from 'react';
 import { useStore } from './store';
+import { useControls } from './hooks/useControls';
+import { DPad } from './components/DPad';
 import { DropZone } from './components/DropZone';
 import { Dashboard } from './components/Dashboard';
 import { BoxExplorer } from './components/BoxExplorer';
@@ -9,6 +11,11 @@ import { JourneyEstimate } from './components/JourneyEstimate';
 
 function App() {
   const currentScreen = useStore((state) => state.currentScreen);
+  const { lastPressed, getButtonProps, soundEnabled, toggleSound } = useControls();
+
+  const pressedButtonName = typeof lastPressed === 'object' && lastPressed !== null 
+    ? (lastPressed as { button: string }).button 
+    : lastPressed;
 
   return (
     <div className="min-h-screen p-4 md:p-8 flex items-center justify-center bg-[#d0d5df] overflow-hidden">
@@ -23,29 +30,24 @@ function App() {
 
         {/* Desktop Left Controls (D-PAD) - Hidden on mobile, shown on md */}
         <div className="hidden md:flex flex-col items-center justify-center w-48 relative mt-12">
-          <div className="w-32 h-32 relative opacity-90 drop-shadow-lg">
-            {/* D-Pad vertical bar */}
-            <div className="absolute top-0 bottom-0 left-1/3 right-1/3 bg-[#333] rounded-sm shadow-md border-b-2 border-gray-800"></div>
-            {/* D-Pad horizontal bar */}
-            <div className="absolute left-0 right-0 top-1/3 bottom-1/3 bg-[#333] rounded-sm shadow-md border-b-2 border-gray-800"></div>
-            {/* Center dot */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#222] rounded-full shadow-inner"></div>
-            
-            {/* Directional ridges */}
-            <div className="absolute top-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-b-[5px] border-b-gray-600"></div>
-            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-t-[5px] border-t-gray-600"></div>
-            <div className="absolute left-1 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[3px] border-t-transparent border-b-[3px] border-b-transparent border-r-[5px] border-r-gray-600"></div>
-            <div className="absolute right-1 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[3px] border-t-transparent border-b-[3px] border-b-transparent border-l-[5px] border-l-gray-600"></div>
-          </div>
+          <DPad size="lg" getButtonProps={getButtonProps} />
           
           {/* Start / Select */}
           <div className="flex space-x-6 mt-16">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-4 bg-gray-500 rounded-full shadow-[inset_1px_2px_4px_rgba(0,0,0,0.4)] transform -rotate-12 cursor-pointer hover:bg-gray-400 border-b border-white/20"></div>
+              <button
+                type="button"
+                {...getButtonProps('SELECT')}
+                className="w-12 h-4 neu-pill-btn transform -rotate-12 focus:outline-none"
+              />
               <span className="text-[10px] text-gray-500 font-bold mt-2 select-none">SELECT</span>
             </div>
             <div className="flex flex-col items-center">
-              <div className="w-12 h-4 bg-gray-500 rounded-full shadow-[inset_1px_2px_4px_rgba(0,0,0,0.4)] transform -rotate-12 cursor-pointer hover:bg-gray-400 border-b border-white/20"></div>
+              <button
+                type="button"
+                {...getButtonProps('START')}
+                className="w-12 h-4 neu-pill-btn transform -rotate-12 focus:outline-none"
+              />
               <span className="text-[10px] text-gray-500 font-bold mt-2 select-none">START</span>
             </div>
           </div>
@@ -53,9 +55,22 @@ function App() {
 
         {/* Center: The Screen Bezel */}
         <div className="neu-screen-bezel mt-12 md:mt-12 w-full max-w-3xl flex flex-col relative z-10 border-t-4 border-l-4 border-r-2 border-b-2 border-gray-900/40">
-          <div className="text-gray-400 text-[10px] font-bold mb-2 tracking-widest flex items-center">
-            <div className="w-2 h-2 rounded-full bg-red-600 mr-2 shadow-[0_0_4px_#f00,inset_1px_1px_2px_rgba(255,255,255,0.4)]"></div> 
-            BATTERY
+          <div className="flex justify-between items-center text-gray-400 text-[10px] font-bold mb-2 tracking-widest select-none">
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={toggleSound}
+                className="hover:text-white transition-colors cursor-pointer flex items-center gap-1 font-mono tracking-normal px-1.5 py-0.5 rounded bg-gray-800/60 border border-gray-700/50"
+                title="Toggle 8-bit sound effects"
+              >
+                <span>{soundEnabled ? '🔊 SFX' : '🔇 MUTE'}</span>
+              </button>
+            </div>
+            {pressedButtonName && (
+              <div className="text-[9px] text-emerald-400 font-mono tracking-wider transition-all">
+                BUTTON: [{pressedButtonName}]
+              </div>
+            )}
           </div>
           
           {/* The LCD Screen */}
@@ -77,10 +92,22 @@ function App() {
         <div className="hidden md:flex flex-col items-center justify-center w-48 relative mt-12">
           <div className="flex space-x-6 transform -rotate-12">
             <div className="flex flex-col items-center mt-12">
-              <div className="w-14 h-14 neu-button-red text-xl select-none font-bold">B</div>
+              <button
+                type="button"
+                {...getButtonProps('B')}
+                className="w-14 h-14 neu-button-red text-xl font-bold focus:outline-none"
+              >
+                B
+              </button>
             </div>
             <div className="flex flex-col items-center mb-12">
-              <div className="w-14 h-14 neu-button-red text-xl select-none font-bold">A</div>
+              <button
+                type="button"
+                {...getButtonProps('A')}
+                className="w-14 h-14 neu-button-red text-xl font-bold focus:outline-none"
+              >
+                A
+              </button>
             </div>
           </div>
         </div>
@@ -88,19 +115,27 @@ function App() {
         {/* Mobile-Only Controls (D-pad & Buttons beneath the screen) */}
         <div className="flex md:hidden justify-between items-center w-full mt-4 px-4">
           {/* D-Pad */}
-          <div className="w-28 h-28 relative opacity-90 drop-shadow-lg">
-            <div className="absolute top-0 bottom-0 left-1/3 right-1/3 bg-[#333] rounded-sm shadow-md border-b-2 border-gray-800"></div>
-            <div className="absolute left-0 right-0 top-1/3 bottom-1/3 bg-[#333] rounded-sm shadow-md border-b-2 border-gray-800"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#222] rounded-full shadow-inner"></div>
-          </div>
+          <DPad size="md" getButtonProps={getButtonProps} />
 
           {/* A / B Buttons */}
           <div className="flex space-x-4 transform -rotate-12">
             <div className="flex flex-col items-center mt-8">
-              <div className="w-12 h-12 neu-button-red text-lg select-none font-bold">B</div>
+              <button
+                type="button"
+                {...getButtonProps('B')}
+                className="w-12 h-12 neu-button-red text-lg font-bold focus:outline-none"
+              >
+                B
+              </button>
             </div>
             <div className="flex flex-col items-center mb-8">
-              <div className="w-12 h-12 neu-button-red text-lg select-none font-bold">A</div>
+              <button
+                type="button"
+                {...getButtonProps('A')}
+                className="w-12 h-12 neu-button-red text-lg font-bold focus:outline-none"
+              >
+                A
+              </button>
             </div>
           </div>
         </div>
@@ -108,11 +143,19 @@ function App() {
         {/* Mobile-Only Start/Select */}
         <div className="flex md:hidden space-x-6 justify-center w-full mt-6 mb-2">
           <div className="flex flex-col items-center">
-            <div className="w-10 h-3 bg-gray-500 rounded-full shadow-[inset_1px_2px_4px_rgba(0,0,0,0.4)] transform -rotate-12 cursor-pointer border-b border-white/20"></div>
+            <button
+              type="button"
+              {...getButtonProps('SELECT')}
+              className="w-10 h-3 neu-pill-btn transform -rotate-12 focus:outline-none"
+            />
             <span className="text-[9px] text-gray-500 font-bold mt-1 select-none">SELECT</span>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-10 h-3 bg-gray-500 rounded-full shadow-[inset_1px_2px_4px_rgba(0,0,0,0.4)] transform -rotate-12 cursor-pointer border-b border-white/20"></div>
+            <button
+              type="button"
+              {...getButtonProps('START')}
+              className="w-10 h-3 neu-pill-btn transform -rotate-12 focus:outline-none"
+            />
             <span className="text-[9px] text-gray-500 font-bold mt-1 select-none">START</span>
           </div>
         </div>

@@ -267,9 +267,9 @@ describe('Save File Parser (§2.1-2.6)', () => {
         const sec1 = blockA.subarray(4096, 8192);
         const secView = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
 
-        secView.setUint32(0x0034, 2, true);
-        sec1.set(createMockPokemonData(0, 25), 0x0038); // Pikachu
-        sec1.set(createMockPokemonData(24, 1), 0x0038 + 100); // Bulbasaur
+        secView.setUint32(0x0234, 2, true);
+        sec1.set(createMockPokemonData(0, 25), 0x0238); // Pikachu
+        sec1.set(createMockPokemonData(24, 1), 0x0238 + 100); // Bulbasaur
 
         const checksum = calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]);
         secView.setUint16(0x0FF6, checksum, true);
@@ -289,10 +289,10 @@ describe('Save File Parser (§2.1-2.6)', () => {
         const sec1 = blockA.subarray(4096, 8192);
         const secView = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
 
-        secView.setUint32(0x0034, 1, true);
-        sec1.set(createMockPokemonData(0, 25), 0x0038);
-        sec1.set(createMockPokemonData(24, 1), 0x0038 + 100);
-        sec1.set(createMockPokemonData(48, 4), 0x0038 + 200);
+        secView.setUint32(0x0234, 1, true);
+        sec1.set(createMockPokemonData(0, 25), 0x0238);
+        sec1.set(createMockPokemonData(24, 1), 0x0238 + 100);
+        sec1.set(createMockPokemonData(48, 4), 0x0238 + 200);
 
         const checksum = calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]);
         secView.setUint16(0x0FF6, checksum, true);
@@ -310,9 +310,9 @@ describe('Save File Parser (§2.1-2.6)', () => {
         const sec1 = blockA.subarray(4096, 8192);
         const secView = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
 
-        secView.setUint32(0x0034, 10, true);
+        secView.setUint32(0x0234, 10, true);
         for (let i = 0; i < 6; i++) {
-            sec1.set(createMockPokemonData(i * 24, i + 1), 0x0038 + i * 100);
+            sec1.set(createMockPokemonData(i * 24, i + 1), 0x0238 + i * 100);
         }
 
         const checksum = calculateSectionChecksum(sec1, DATA_SIZE_FOR_ID[1]);
@@ -328,8 +328,8 @@ describe('Save File Parser (§2.1-2.6)', () => {
         const blockA = createValidBlock(1);
         const sec1 = blockA.subarray(4096, 8192);
         const secView = new DataView(sec1.buffer, sec1.byteOffset, sec1.byteLength);
-        secView.setUint32(0x0034, 1, true);
-        sec1.set(createMockPokemonData(0, 25), 0x0038);
+        secView.setUint32(0x0234, 1, true);
+        sec1.set(createMockPokemonData(0, 25), 0x0238);
 
         const block: SaveBlock = {
             isValid: true,

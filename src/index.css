@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -5,75 +6,185 @@
   --color-gba-plastic-dark: #b8bfcc;
   --color-gba-plastic-light: #e8ecf2;
   --color-gba-screen-border: #2a2c36;
-  --color-gba-screen-bg: #8ba68b; /* Classic GameBoy green LCD color */
-  --color-gba-screen-text: #1b3819;
+  --color-gba-screen-bg: #16202e; /* GBA Gen 3 deep TFT screen tone */
+  --color-gba-screen-text: #eef2f7;
   
   --color-gba-button-a: #d9415c;
   --color-gba-button-b: #d9415c;
   --color-gba-dpad: #333333;
   
-  --color-brand-accent: #d9415c;
-  --color-verdict-verified: #5fa777;
-  --color-verdict-uncertain: #d9a441;
-  --color-verdict-modified: #c1554b;
-  --color-verdict-ghost: #8c7bc4;
+  --color-brand-accent: #e04038; /* FireRed red */
+  --color-verdict-verified: #48c058;
+  --color-verdict-uncertain: #f8b820;
+  --color-verdict-modified: #f84030;
+  --color-verdict-ghost: #9c88e0;
 }
 
 @layer base {
   body {
     background-color: var(--color-gba-plastic);
     color: #333;
-    font-family: "Inter", sans-serif;
+    font-family: "Press Start 2P", monospace;
   }
 }
 
 @layer utilities {
-  .neu-plastic {
-    background: var(--color-gba-plastic);
-    box-shadow:  8px 8px 16px var(--color-gba-plastic-dark), 
-                -8px -8px 16px var(--color-gba-plastic-light);
-  }
-  
-  .neu-plastic-inset {
-    background: var(--color-gba-plastic);
-    box-shadow: inset 6px 6px 12px var(--color-gba-plastic-dark), 
-                inset -6px -6px 12px var(--color-gba-plastic-light);
-  }
-  
-  .neu-screen-bezel {
-    background: var(--color-gba-screen-border);
-    border-radius: 12px 12px 32px 12px;
-    padding: 16px;
-    box-shadow: inset 2px 2px 8px rgba(0,0,0,0.8),
-                4px 4px 10px rgba(0,0,0,0.2);
+  .font-pixel {
+    font-family: 'Press Start 2P', monospace;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  .neu-screen {
-    background: var(--color-gba-screen-bg);
-    color: var(--color-gba-screen-text);
-    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.3);
-    border-radius: 4px;
-    font-family: "Courier New", Courier, monospace;
-    position: relative;
-    overflow: hidden;
+  .font-dialog {
+    font-family: 'Silkscreen', 'Press Start 2P', monospace;
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Pixel grid overlay for LCD effect */
-  .neu-screen::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(rgba(18, 16, 13, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-    background-size: 100% 4px, 6px 100%;
-    pointer-events: none;
-    z-index: 10;
+  /* Authentic FireRed / Gen 3 Cream Dialogue Window */
+  .pokemon-dialog-cream {
+    background-color: #f8f8f0;
+    color: #282830;
+    border: 3px solid #303038;
+    box-shadow: 
+      inset 2px 2px 0px 0px #ffffff,
+      inset -2px -2px 0px 0px #9898a8,
+      inset 4px 4px 0px 0px #f0f0e8,
+      inset -4px -4px 0px 0px #c0c0c8,
+      2px 2px 0px 0px rgba(0, 0, 0, 0.4);
+    image-rendering: pixelated;
+  }
+
+  /* Authentic Gen 3 PC Box / Storage Window */
+  .pokemon-window-blue {
+    background-color: #22354c;
+    color: #f0f4f8;
+    border: 3px solid #0a121c;
+    box-shadow: 
+      inset 2px 2px 0px 0px #4d7099,
+      inset -2px -2px 0px 0px #121c29,
+      2px 2px 0px 0px rgba(0, 0, 0, 0.4);
+    image-rendering: pixelated;
+  }
+
+  /* FireRed Red Header Banner */
+  .pokemon-banner-red {
+    background: linear-gradient(180deg, #e44030 0%, #b82818 100%);
+    color: #ffffff;
+    border: 3px solid #581008;
+    box-shadow: 
+      inset 1px 1px 0px 0px #ff8878,
+      inset -1px -1px 0px 0px #70140c,
+      2px 2px 0px 0px rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 0px #480800;
+    image-rendering: pixelated;
+  }
+
+  /* Emerald Green Header Banner */
+  .pokemon-banner-emerald {
+    background: linear-gradient(180deg, #389870 0%, #206850 100%);
+    color: #ffffff;
+    border: 3px solid #082018;
+    box-shadow: 
+      inset 1px 1px 0px 0px #60c898,
+      inset -1px -1px 0px 0px #144030,
+      2px 2px 0px 0px rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 0px #041810;
+    image-rendering: pixelated;
+  }
+
+  /* FireRed Trainer Card Styled Panel */
+  .pokemon-trainer-card {
+    background-color: #2b405c;
+    background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.035) 0, rgba(255,255,255,0.035) 3px, transparent 0, transparent 9px);
+    border: 3px solid #0d1724;
+    box-shadow: 
+      inset 2px 2px 0px 0px #5a87b8,
+      inset -2px -2px 0px 0px #162232,
+      2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+    image-rendering: pixelated;
+  }
+
+  /* Gen 3 Action Menu Button */
+  .pokemon-menu-btn {
+    background: #1c2b3d;
+    border: 2px solid #0a121c;
+    box-shadow: inset 1px 1px 0px #496d96, inset -1px -1px 0px #0e1622;
+    color: #f0f4f8;
+    font-family: 'Press Start 2P', monospace;
+    image-rendering: pixelated;
+    transition: background-color 0.1s, border-color 0.1s, color 0.1s;
+    cursor: pointer;
+  }
+  .pokemon-menu-btn:hover {
+    background: #283e58;
+    border-color: #e04038;
+    box-shadow: inset 1px 1px 0px #6090c0, inset -1px -1px 0px #14202e, 0 0 6px rgba(224, 64, 56, 0.35);
+    color: #ffffff;
+  }
+
+  /* GBA Top Navigation Bar Button */
+  .pokemon-nav-tab {
+    background: #141e2b;
+    border: 2px solid #080d14;
+    box-shadow: inset 1px 1px 0px #354e6e, inset -1px -1px 0px #080d14;
+    color: #c0d0e0;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 4px 6px;
+    cursor: pointer;
+    image-rendering: pixelated;
+    transition: all 0.1s;
+  }
+  .pokemon-nav-tab:hover {
+    background: #22374e;
+    color: #ffd040;
+    border-color: #ffd040;
+  }
+
+  .text-shadow-pokemon {
+    text-shadow: 1px 1px 0px #101620;
+  }
+
+  .text-shadow-dialog {
+    text-shadow: 1px 1px 0px #c0c0c8;
+  }
+
+  /* Pixel Corner cutout helper */
+  .pixel-borders {
+    clip-path: polygon(
+      0 4px, 4px 4px, 4px 0,
+      calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+      100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+      4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+    );
+  }
+
+  /* Gen 3 bouncing cursor */
+  @keyframes pokemon-cursor-bounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(3px); }
+  }
+  .animate-pokemon-cursor {
+    animation: pokemon-cursor-bounce 0.6s infinite ease-in-out;
+  }
+
+  /* Gen 3 dialog box prompt arrow */
+  @keyframes pokemon-prompt-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+  }
+  .animate-pokemon-prompt {
+    animation: pokemon-prompt-bounce 0.5s infinite ease-in-out;
   }
 
   .neu-button-red {
     background: var(--color-gba-button-a);
-    box-shadow: inset -2px -2px 6px rgba(0,0,0,0.3),
-                inset 2px 2px 6px rgba(255,255,255,0.4),
-                4px 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 4px 6px 10px rgba(0,0,0,0.35),
+                inset -2px -2px 6px rgba(0,0,0,0.3),
+                inset 2px 2px 6px rgba(255,255,255,0.4);
     border-radius: 50%;
     color: white;
     font-weight: bold;
@@ -82,12 +193,64 @@
     justify-content: center;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
     cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.06s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .neu-button-red:active {
-    box-shadow: inset 4px 4px 8px rgba(0,0,0,0.5),
-                inset -2px -2px 6px rgba(255,255,255,0.2);
-    transform: scale(0.96);
+  .neu-button-red:active,
+  .neu-button-red[data-active="true"] {
+    transform: translateY(4px);
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.4),
+                inset 3px 4px 8px rgba(0,0,0,0.6),
+                inset -1px -1px 3px rgba(255,255,255,0.2);
+    filter: brightness(0.92);
+  }
+
+  .dpad-button {
+    background-color: #333333;
+    border: 1px solid #282828;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 3px 6px rgba(0,0,0,0.4), inset 1px 1px 2px rgba(255,255,255,0.2);
+    transition: transform 0.05s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.05s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.05s ease;
+  }
+
+  .dpad-button:hover {
+    background-color: #3a3a3a;
+  }
+
+  .dpad-button:active,
+  .dpad-button[data-active="true"] {
+    transform: translateY(3px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.5), inset 2px 3px 6px rgba(0,0,0,0.7);
+    background-color: #222222;
+  }
+
+  .neu-pill-btn {
+    background-color: #6b7280;
+    border-radius: 9999px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 2px 3px 5px rgba(0,0,0,0.35), inset 1px 1px 2px rgba(255,255,255,0.3);
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    transition: transform 0.05s ease, box-shadow 0.05s ease, background-color 0.05s ease;
+  }
+
+  .neu-pill-btn:hover {
+    background-color: #9ca3af;
+  }
+
+  .neu-pill-btn:active,
+  .neu-pill-btn[data-active="true"] {
+    transform: translateY(2px) rotate(-12deg);
+    box-shadow: inset 2px 3px 5px rgba(0,0,0,0.6);
+    background-color: #4b5563;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -105,4 +268,13 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgba(0,0,0,0.5);
   }
+
+  .pixelated,
+  img.pixelated {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
 }
+

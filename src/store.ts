@@ -24,3 +24,6 @@ export const useStore = create<AppState>((set) => ({
     setSaveData: (data) => set({ ...data, currentScreen: 'DASHBOARD' }),
     reset: () => set({ currentScreen: 'DROP', saveFile: null, ghosts: [], timeline: [] }),
 }));
+
+export * from './controlsStore';
+

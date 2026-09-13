@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from '../store';
 import { Pokemon } from '../parser/types';
+import { PokemonSprite } from './PokemonSprite';
 
 export const LegitimacyReport: React.FC = () => {
     const { saveFile, setScreen } = useStore();
@@ -17,12 +18,12 @@ export const LegitimacyReport: React.FC = () => {
     const modified = allPokemon.filter(p => p.verdict?.tier === 'LIKELY_MODIFIED' || p.verdict?.tier === 'INVALID');
 
     return (
-        <div className="flex flex-col h-[90vh]">
-            <div className="flex justify-between items-center border-b border-gray-700 pb-4 mb-4">
-                <button onClick={() => setScreen('DASHBOARD')} className="text-[var(--color-brand-accent)] hover:underline">&larr; Back to Dashboard</button>
+        <div className="flex flex-col h-full overflow-hidden">
+            <div className="flex justify-between items-center border-b border-gray-700 pb-3 mb-3 flex-shrink-0">
+                <button onClick={() => setScreen('DASHBOARD')} className="text-[var(--color-brand-accent)] hover:underline text-sm font-mono">&larr; Back to Dashboard</button>
                 <div className="flex items-center space-x-4">
-                    <h1 className="text-xl font-bold">Legitimacy Forensics</h1>
-                    <div className="text-sm flex space-x-2">
+                    <h1 className="text-lg md:text-xl font-bold font-mono">Legitimacy Forensics</h1>
+                    <div className="text-xs md:text-sm font-mono flex space-x-2">
                         <span className="text-[var(--color-verdict-verified)]">{verified.length} ✓</span>
                         <span className="text-[var(--color-verdict-uncertain)]">{uncertain.length} ?</span>
                         <span className="text-[var(--color-verdict-modified)]">{modified.length} ✗</span>
@@ -30,21 +31,25 @@ export const LegitimacyReport: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex-grow overflow-y-auto pr-2 scrollbar-thin pb-8 space-y-4">
+            <div className="flex-grow overflow-y-auto pr-1 scrollbar-thin pb-6 space-y-3 min-h-0">
                 {allPokemon.map((p, i) => (
-                    <div key={i} className="border border-gray-700 rounded p-4 bg-[#1A1815] flex space-x-4">
-                        <div className="w-16 h-16 bg-gray-800/80 rounded border border-gray-600/50 flex-shrink-0 flex items-center justify-center neu-plastic-inset">
-                            <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.species}.png`} alt={p.species.toString()} className="w-12 h-12 object-contain" />
+                    <div key={i} className="border border-gray-700 rounded-lg p-3 bg-[#1A1815] flex items-center space-x-4 shadow-md hover:border-gray-500 transition-colors">
+                        <div className="w-28 h-28 bg-gray-800/80 rounded-lg border border-gray-600/50 flex-shrink-0 flex items-center justify-center neu-plastic-inset p-1">
+                            <PokemonSprite 
+                                species={p.species} 
+                                alt={p.nickname || p.species.toString()} 
+                                className="w-24 h-24 drop-shadow-md" 
+                            />
                         </div>
-                        <div className="flex-grow">
-                            <div className="flex items-center space-x-4 mb-2">
-                                <span className="font-bold text-lg w-32">{p.nickname || `Species ${p.species}`}</span>
-                                <span className="text-gray-400 w-16">Lv.{p.metLevel}</span>
+                        <div className="flex-grow min-w-0">
+                            <div className="flex items-center space-x-3 mb-2 flex-wrap gap-1">
+                                <span className="font-bold text-base md:text-lg font-mono truncate">{p.nickname || `Species ${p.species}`}</span>
+                                <span className="text-gray-400 text-xs md:text-sm font-mono">Lv.{p.metLevel}</span>
                                 <VerdictBadge tier={p.verdict?.tier || 'VERIFIED'} />
                             </div>
-                            <div className="text-sm space-y-1">
+                            <div className="text-xs space-y-1">
                                 {p.verdict?.evidence.map((ev, idx) => (
-                                    <div key={idx} className="text-gray-400">▸ {ev}</div>
+                                    <div key={idx} className="text-gray-400 font-mono">▸ {ev}</div>
                                 ))}
                             </div>
                         </div>
@@ -54,6 +59,7 @@ export const LegitimacyReport: React.FC = () => {
         </div>
     );
 };
+
 
 const VerdictBadge: React.FC<{ tier: string }> = ({ tier }) => {
     let color = '';
