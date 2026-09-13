@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStore, Screen } from '../store';
 import { useControlsStore, ControllerButton, retroAudio } from '../controlsStore';
 import { PokemonSprite } from './PokemonSprite';
+import { getDisplayName } from '../utils/pokemonNames';
 
 interface NavOption {
     id: Screen;
@@ -254,14 +255,14 @@ export const Dashboard: React.FC = () => {
                                     <div className="w-8 h-8 bg-[#101b2a] rounded flex items-center justify-center flex-shrink-0 border border-black/40">
                                         <PokemonSprite
                                             species={p.species}
-                                            alt={p.nickname || p.species.toString()}
+                                            alt={getDisplayName(p.nickname, p.species)}
                                             className="w-7 h-7 drop-shadow"
                                         />
                                     </div>
                                     <div className="flex-grow min-w-0">
                                         <div className="flex justify-between items-center">
                                             <span className="text-[7px] font-bold truncate text-white">
-                                                {p.nickname || 'POKéMON'}
+                                                {getDisplayName(p.nickname, p.species)}
                                             </span>
                                             <span className="text-[6px] text-gray-300">
                                                 Lv.{p.metLevel}

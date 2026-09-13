@@ -2,6 +2,8 @@ import React from 'react';
 import { useStore } from '../store';
 import { PokemonSprite } from './PokemonSprite';
 
+import { getDisplayName } from '../utils/pokemonNames';
+
 export const GhostGallery: React.FC = () => {
     const { ghosts, setScreen } = useStore();
 
@@ -15,7 +17,7 @@ export const GhostGallery: React.FC = () => {
             <div className="bg-[#1A1815] border border-gray-700 p-3 rounded mb-4 flex-shrink-0">
                 <h2 className="text-[var(--color-verdict-ghost)] font-bold text-sm mb-1 font-mono">GHOSTS RECOVERED FROM THE BACKUP BLOCK</h2>
                 <p className="text-xs text-gray-400">
-                    ⚠ Only the single most recent save-to-save change is recoverable — this is not a full release history.
+                    ⚠️ Only the single most recent save-to-save change is recoverable — this is not a full release history.
                 </p>
             </div>
 
@@ -30,13 +32,13 @@ export const GhostGallery: React.FC = () => {
                             <div className="w-28 h-28 bg-gray-800/80 rounded-lg border border-gray-600/50 flex-shrink-0 flex items-center justify-center neu-plastic-inset p-1">
                                 <PokemonSprite 
                                     species={g.pokemon.species} 
-                                    alt={g.pokemon.nickname || g.pokemon.species.toString()} 
+                                    alt={getDisplayName(g.pokemon.nickname, g.pokemon.species)} 
                                     className="w-24 h-24 drop-shadow-md" 
                                 />
                             </div>
                             <div className="flex-grow min-w-0">
                                 <div className="flex items-center space-x-2 mb-1 flex-wrap gap-1">
-                                    <span className="font-bold text-base font-mono truncate">{g.pokemon.nickname || 'Pokemon'}</span>
+                                    <span className="font-bold text-base font-mono truncate">{getDisplayName(g.pokemon.nickname, g.pokemon.species)}</span>
                                     <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--color-verdict-ghost)]/20 text-[var(--color-verdict-ghost)] border border-[var(--color-verdict-ghost)] font-mono">
                                         {g.type}
                                     </span>

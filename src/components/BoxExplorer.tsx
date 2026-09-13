@@ -3,6 +3,7 @@ import { useStore } from '../store';
 import { useControlsStore } from '../controlsStore';
 import { Pokemon } from '../parser/types';
 import { PokemonSprite } from './PokemonSprite';
+import { getDisplayName } from '../utils/pokemonNames';
 
 export const BoxExplorer: React.FC = () => {
     const { saveFile, setScreen } = useStore();
@@ -79,7 +80,7 @@ const PokemonSlot: React.FC<{ pokemon: Pokemon | null }> = ({ pokemon }) => {
             </div>
             <PokemonSprite 
                 species={pokemon.species} 
-                alt={pokemon.nickname || pokemon.species.toString()} 
+                alt={getDisplayName(pokemon.nickname, pokemon.species)} 
                 className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-md" 
             />
             <div 
@@ -87,9 +88,8 @@ const PokemonSlot: React.FC<{ pokemon: Pokemon | null }> = ({ pokemon }) => {
                 style={{ backgroundColor: dotColor, color: dotColor }}
             ></div>
             <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/95 text-white text-[10px] font-mono px-2 py-0.5 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-30 border border-gray-700 shadow-lg">
-                {pokemon.nickname || `Species #${pokemon.species}`}
+                {getDisplayName(pokemon.nickname, pokemon.species)}
             </div>
         </div>
     );
 };
-
