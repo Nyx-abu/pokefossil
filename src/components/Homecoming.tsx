@@ -376,7 +376,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                     {beat === 2 && (
                         <div className="flex flex-col items-center justify-center w-full">
                             {/* Party Lineup on Clean Background */}
-                            <div className="w-full bg-white/80 border border-[#303848]/20 rounded-xl p-4 sm:p-6 shadow-sm">
+                            <div className="w-full max-w-6xl mx-auto px-2">
                                 {party.length > 0 ? (
                                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 items-end justify-items-center">
                                         {party.map((mon, idx) => {
@@ -405,15 +405,15 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                                             />
                                                         </div>
                                                         {/* Mini GBA grass battle base */}
-                                                        <div className="w-16 sm:w-20 h-5 bg-[#78b878] rounded-[50%] border border-[#303848] shadow-sm -mt-2.5" />
+                                                        <div className="w-24 sm:w-32 h-6 bg-[#78b878] rounded-[50%] border border-[#303848] shadow-sm -mt-2.5" />
                                                     </div>
 
                                                     <div className="mt-2 w-full">
-                                                        <div className="font-serif font-bold text-xs sm:text-sm text-[#202830] truncate">
+                                                        <div className="font-pixel font-bold text-xs sm:text-sm text-[#202830] truncate">
                                                             {hasCustomNickname ? nickname : speciesName}
                                                         </div>
                                                         {hasCustomNickname && (
-                                                            <div className="text-[10px] font-serif text-[#606878] truncate">
+                                                            <div className="text-[10px] font-pixel text-[#606878] truncate">
                                                                 {speciesName}
                                                             </div>
                                                         )}
@@ -426,7 +426,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                         })}
                                     </div>
                                 ) : (
-                                    <div className="text-center py-8 font-serif text-sm text-[#606878] italic">
+                                    <div className="text-center py-8 font-pixel text-sm text-[#606878] italic">
                                         Your active party was empty. All companions rested securely in the PC storage boxes.
                                     </div>
                                 )}
@@ -450,9 +450,9 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                                 className="w-full h-full object-contain pixelated drop-shadow"
                                             />
                                         </div>
-                                        <div className="w-20 sm:w-24 h-6 bg-[#78b878] rounded-[50%] border border-[#303848] -mt-3 shadow-sm" />
+                                        <div className="w-28 sm:w-36 h-8 bg-[#78b878] rounded-[50%] border border-[#303848] -mt-3 shadow-sm" />
                                     </div>
-                                    <div className="mt-2 font-serif font-bold text-xs sm:text-sm text-[#202830]">
+                                    <div className="mt-2 font-pixel font-bold text-xs sm:text-sm text-[#202830]">
                                         {starterInfo.currentName}
                                     </div>
                                     <div className="font-raw-data text-[10px] text-[#606878]">
@@ -476,9 +476,9 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                                     className="w-full h-full object-contain pixelated drop-shadow"
                                                 />
                                             </div>
-                                            <div className="w-20 sm:w-24 h-6 bg-[#d8b068] rounded-[50%] border border-[#303848] -mt-3 shadow-sm" />
+                                            <div className="w-28 sm:w-36 h-8 bg-[#d8b068] rounded-[50%] border border-[#303848] -mt-3 shadow-sm" />
                                         </div>
-                                        <div className="mt-2 font-serif font-bold text-xs sm:text-sm text-[#202830]">
+                                        <div className="mt-2 font-pixel font-bold text-xs sm:text-sm text-[#202830]">
                                             {firstBadgeCompanion.speciesName}
                                         </div>
                                         <div className="font-raw-data text-[10px] text-[#606878]">
@@ -522,12 +522,12 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                             />
                                         </div>
                                         {/* Soft mystic battle platform */}
-                                        <div className="w-28 sm:w-36 h-8 bg-gradient-to-r from-[#b0a8c8] via-[#e8e0f8] to-[#b0a8c8] rounded-[50%] border-2 border-[#303848] -mt-4 shadow-sm" />
+                                        <div className="w-36 sm:w-48 h-10 bg-gradient-to-r from-[#b0a8c8] via-[#e8e0f8] to-[#b0a8c8] rounded-[50%] border-2 border-[#303848] -mt-4 shadow-sm" />
                                     </div>
 
                                     {/* Ghost Mon Badge */}
                                     <div className="bg-white/90 border border-[#303848]/20 px-4 py-2 rounded shadow-sm text-center">
-                                        <div className="font-serif font-bold text-sm sm:text-base text-[#202830]">
+                                        <div className="font-pixel font-bold text-sm sm:text-base text-[#202830]">
                                             {ghostData.nickname} <span className="font-normal text-xs text-[#606878]">({ghostData.speciesName})</span>
                                         </div>
                                         <div className="font-raw-data text-[10px] text-[#805090] mt-0.5">
@@ -600,7 +600,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                     </div>
 
                     {/* Dialogue Text Area */}
-                    <div className="font-serif text-base sm:text-lg text-[#202830] leading-relaxed pr-8">
+                    <div className="font-pixel text-base sm:text-lg text-[#202830] leading-relaxed pr-8">
                         {beat === 1 && (
                             <div className="space-y-1">
                                 <p>

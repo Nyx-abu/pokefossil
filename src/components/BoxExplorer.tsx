@@ -388,7 +388,7 @@ const PokemonSlot: React.FC<PokemonSlotProps> = ({
 }) => {
     if (!pokemon) {
         return (
-            <div className="aspect-square bg-[#f0f4f8]/60 border-2 border-dashed border-[#c8d4e4] rounded-lg flex items-center justify-center text-[12px] font-pixel text-[#a8b8c8] select-none">
+            <div className="aspect-square bg-transparent border-2 border-transparent rounded-lg flex items-center justify-center text-[12px] font-pixel text-[#a8b8c8] select-none">
                 {slotNumber}
             </div>
         );
