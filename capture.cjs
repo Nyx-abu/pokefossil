@@ -4,7 +4,7 @@ const fs = require('fs');
 
 async function run() {
   const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-  const artifactDir = 'C:\\Users\\shoto\\.gemini\\antigravity\\brain\\cbe2a76d-4a5c-4858-bf76-ac942a89022e';
+  const artifactDir = 'C:\\Users\\shoto\\.gemini\\antigravity\\brain\\a4debc25-5e3b-4ad3-8427-0e61c9d0fff7';
 
   console.log('Launching browser with:', chromePath);
   const browser = await puppeteer.launch({
@@ -21,6 +21,14 @@ async function run() {
 
     console.log('Navigating to http://localhost:5173...');
     await page.goto('http://localhost:5173', { waitUntil: 'networkidle0' });
+    await new Promise(r => setTimeout(r, 1000));
+
+    // Capture DropZone title screen
+    const dropzoneLocal = path.join(__dirname, 'dropzone.png');
+    const dropzoneArtifact = path.join(artifactDir, 'dropzone.png');
+    await page.screenshot({ path: dropzoneLocal });
+    fs.copyFileSync(dropzoneLocal, dropzoneArtifact);
+    console.log('Saved DropZone:', dropzoneLocal);
 
     console.log('Waiting for file input...');
     const fileInput = await page.waitForSelector('input[type="file"]');
@@ -32,7 +40,7 @@ async function run() {
     console.log('Waiting for Beat 1...');
     await page.waitForFunction(() => {
       return document.body.innerText.includes('hours') || 
-             document.body.innerText.includes('You played as');
+             document.body.innerText.includes('TRAINER:');
     }, { timeout: 10000 });
     await new Promise(r => setTimeout(r, 1500));
 
@@ -47,7 +55,8 @@ async function run() {
     console.log('Advancing to Beat 2...');
     await page.keyboard.press('Space');
     await page.waitForFunction(() => {
-      return document.body.innerText.includes('This is who was with you at the end');
+      return document.body.innerText.includes('ACTIVE ROSTER') || 
+             document.body.innerText.includes('PAGE 2 OF 5');
     }, { timeout: 10000 });
     await new Promise(r => setTimeout(r, 2000));
 

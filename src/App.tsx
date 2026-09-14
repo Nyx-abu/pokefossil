@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStore, ExploreTab } from './store';
+import { useStore } from './store';
 import { DropZone } from './components/DropZone';
 import { Homecoming } from './components/Homecoming';
 import { BoxExplorer } from './components/BoxExplorer';
@@ -22,7 +22,7 @@ function App() {
 
   if (currentScreen === 'DROP' || !saveFile) {
     return (
-      <div className="min-h-screen bg-[#f4f1ea] overflow-hidden relative"><div className="vignette-overlay" /><div className="noise-overlay" />
+      <div className="min-h-screen frlg-bg-pattern overflow-hidden relative">
         <DropZone />
       </div>
     );
@@ -30,7 +30,7 @@ function App() {
 
   if (currentScreen === 'STORY') {
     return (
-      <div className="min-h-screen bg-[#f4f1ea] overflow-hidden relative"><div className="vignette-overlay" /><div className="noise-overlay" />
+      <div className="min-h-screen frlg-bg-pattern overflow-hidden relative">
         <Homecoming 
           saveFile={saveFile} 
           ghosts={ghosts} 
@@ -42,47 +42,57 @@ function App() {
 
   // EXPLORE MODE
   return (
-    <div className="min-h-screen bg-[#f4f1ea] text-[#3a3532] flex flex-col font-serif relative">
-      <div className="vignette-overlay" />
-      <div className="noise-overlay" />
-      
-      <header className="bg-transparent border-b border-[#dfd8ca]/50 z-20 shrink-0 sticky top-0">
+    <div className="min-h-screen frlg-bg-pattern text-[#282828] flex flex-col relative">
+      <header className="bg-[#f0f4f8] border-b-2 border-[#b8c8d8] z-20 shrink-0 sticky top-0 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 py-2 sm:py-0 gap-2 sm:gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 pt-3 pb-0 md:h-16 md:py-0">
+            <div className="flex items-center justify-between w-full md:w-auto">
               <button 
                 onClick={() => setScreen('STORY')} 
-                className="text-left group transition-colors"
+                className="text-left group transition-transform active:scale-95"
                 title="Return to Story Mode"
               >
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold tracking-tight text-[#3a3532] group-hover:text-[#c19b6c] transition-colors">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3.5 h-3.5 rounded-full bg-[#e65050] inline-block border-2 border-[#384048] shadow-xs" />
+                  <h1 className="text-xs sm:text-sm font-bold tracking-wider text-[#e65050] group-hover:text-[#b83030] transition-colors">
                     PokéFossil
                   </h1>
-                  <span className="text-xs text-gray-400 italic hidden md:inline">
-                    Reference Mode
-                  </span>
                 </div>
               </button>
+              
+              <div className="flex items-center gap-2 md:hidden">
+                <button
+                  onClick={() => setScreen('STORY')}
+                  className="text-[9px] px-2 py-1 rounded border-2 border-[#5080e6] bg-white text-[#5080e6] font-bold"
+                >
+                  Story
+                </button>
+                <button
+                  onClick={reset}
+                  className="text-[9px] px-2 py-1 rounded border-2 border-[#8090a0] bg-white text-[#607080] font-bold"
+                >
+                  New
+                </button>
+              </div>
             </div>
             
-            <nav className="flex space-x-1 sm:space-x-6 overflow-x-auto scrollbar-none">
+            <nav className="flex space-x-1 sm:space-x-2 overflow-x-auto scrollbar-none w-full md:w-auto justify-start md:justify-center items-end self-end">
               <TabBtn label="PC Boxes" active={exploreTab === 'BOXES'} onClick={() => setExploreTab('BOXES')} />
               <TabBtn label="Timeline" active={exploreTab === 'JOURNEY'} onClick={() => setExploreTab('JOURNEY')} />
               <TabBtn label="Ghosts" active={exploreTab === 'GHOSTS'} onClick={() => setExploreTab('GHOSTS')} />
               <TabBtn label="Forensics" active={exploreTab === 'LEGITIMACY'} onClick={() => setExploreTab('LEGITIMACY')} />
             </nav>
 
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <button
                 onClick={() => setScreen('STORY')}
-                className="text-xs px-3 py-1.5 rounded border border-[#c19b6c]/40 text-[#3a3532] hover:bg-[#c19b6c]/10 transition-colors"
+                className="text-[10px] px-3 py-1.5 rounded-md border-2 border-[#5080e6] bg-white text-[#5080e6] hover:bg-[#5080e6] hover:text-white transition-all shadow-xs active:translate-y-0.5 cursor-pointer font-bold"
               >
-                ← Replay Story
+                ◀ Story
               </button>
               <button
                 onClick={reset}
-                className="text-xs px-3 py-1.5 rounded text-gray-500 hover:text-red-700 hover:bg-red-50 transition-colors"
+                className="text-[10px] px-3 py-1.5 rounded-md border-2 border-[#8090a0] bg-white text-[#607080] hover:border-[#e65050] hover:text-[#e65050] transition-all shadow-xs active:translate-y-0.5 cursor-pointer font-bold"
                 title="Eject save file and load another"
               >
                 New File
@@ -101,15 +111,22 @@ function App() {
   );
 }
 
-const TabBtn = ({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) => (
+interface TabBtnProps {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}
+
+const TabBtn = ({ label, active, onClick }: TabBtnProps) => (
   <button 
     onClick={onClick}
-    className={`whitespace-nowrap py-3 sm:py-4 px-2 sm:px-3 border-b-2 font-medium text-sm transition-colors ${
+    className={`whitespace-nowrap px-3 sm:px-4 py-2 sm:py-2.5 rounded-t-lg text-[10px] sm:text-xs font-bold transition-all relative flex items-center gap-1.5 cursor-pointer select-none ${
       active 
-        ? 'border-[#c19b6c] text-[#3a3532]' 
-        : 'border-transparent text-gray-500 hover:text-[#3a3532] hover:border-gray-300'
+        ? 'bg-white text-[#e65050] border-t-4 border-t-[#e65050] border-x-2 border-x-[#b8c8d8] border-b-2 border-b-white -mb-[2px] z-10 shadow-sm' 
+        : 'bg-[#d8e2ec] text-[#586878] border-t-2 border-x-2 border-b-2 border-[#b8c8d8] hover:bg-[#e4ecf4] hover:text-[#282828]'
     }`}
   >
+    {active && <span className="w-1.5 h-1.5 rounded-full bg-[#e65050] inline-block" />}
     {label}
   </button>
 );

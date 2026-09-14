@@ -2,7 +2,27 @@ import React, { useState } from 'react';
 import { useStore } from '../store';
 import { Pokemon } from '../parser/types';
 import { PokemonSprite } from './PokemonSprite';
-import { getDisplayName } from '../utils/pokemonNames';
+import { getDisplayName, getPokemonName } from '../utils/pokemonNames';
+import { getNationalDexId } from '../utils/speciesMapping';
+import { 
+    getNature, 
+    getPokeballName, 
+    isShiny, 
+    getPokemonTypes, 
+    TYPE_BADGE_STYLES 
+} from '../utils/pokemonData';
+
+function getGameName(gameId?: number): string {
+    switch (gameId) {
+        case 1: return 'Sapphire';
+        case 2: return 'Ruby';
+        case 3: return 'Emerald';
+        case 4: return 'FireRed';
+        case 5: return 'LeafGreen';
+        case 15: return 'Colosseum / XD';
+        default: return 'GBA (Gen 3)';
+    }
+}
 
 export const BoxExplorer: React.FC = () => {
     const { saveFile } = useStore();
@@ -13,152 +33,392 @@ export const BoxExplorer: React.FC = () => {
 
     const totalBoxes = saveFile.pokemonBoxes.length;
     const currentBox = saveFile.pokemonBoxes[selectedBox];
+    const boxPokemonList = currentBox.pokemon.filter((p): p is Pokemon => p !== null);
+    const boxCount = boxPokemonList.length;
+
+    // Total Pokemon in all boxes
+    const totalStored = saveFile.pokemonBoxes.reduce(
+        (acc, b) => acc + b.pokemon.filter((p) => p !== null).length, 
+        0
+    );
 
     return (
-        <div className="flex h-full animate-fade-in relative">
-            <div className={`flex flex-col w-full transition-all duration-300 ${selectedPokemon ? 'md:w-2/3 pr-4' : 'w-full'}`}>
-                {/* Header */}
-                <div className="flex justify-between items-center border-b border-[#dfd8ca]/60 pb-4 mb-6 shrink-0">
-                    <h1 className="text-2xl md:text-3xl font-bold font-serif text-[#3a3532] tracking-widest">PC STORAGE</h1>
-                    
-                    <div className="flex items-center space-x-4 bg-[#fdfbf7]/80 p-2 rounded-lg border border-[#dfd8ca]/60 shadow-md">
-                        <button 
-                            onClick={() => setSelectedBox((prev) => (prev > 0 ? prev - 1 : totalBoxes - 1))}
-                            className="p-2 bg-[#f4f1ea] rounded hover:bg-[#c19b6c]/20 hover:text-[#3a3532] transition-colors text-gray-500"
+        <div className="flex flex-col lg:flex-row gap-6 h-full animate-fade-in font-sans pb-6">
+            {/* Left Area: Bill's PC Box Storage Screen */}
+            <div className="flex-1 flex flex-col min-w-0">
+                {/* Bill's PC Main Header Banner */}
+                <div className="dialog-box-blue p-4 mb-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-md bg-[#5080e6] border-2 border-[#384048] flex items-center justify-center text-white font-bold text-xs shadow-xs">
+                            PC
+                        </div>
+                        <div>
+                            <h1 className="font-pixel text-xs sm:text-sm font-bold text-[#282828] tracking-wider">
+                                BILL'S PC STORAGE
+                            </h1>
+                            <p className="text-[10px] text-[#606870] font-sans mt-0.5">
+                                Total Stored: <span className="font-bold text-[#5080e6]">{totalStored}</span> Pokémon · 14 Boxes
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Box Switcher Navigation Banner */}
+                    <div className="flex items-center gap-2 bg-[#eef2f7] border-2 border-[#b8c8d8] px-3 py-1.5 rounded-lg shadow-inner">
+                        <button
+                            onClick={() => {
+                                setSelectedBox((prev) => (prev > 0 ? prev - 1 : totalBoxes - 1));
+                            }}
+                            className="w-7 h-7 bg-white hover:bg-[#5080e6] hover:text-white text-[#282828] border-2 border-[#5080e6] rounded font-pixel text-xs flex items-center justify-center transition-all cursor-pointer active:scale-90 shadow-xs"
+                            title="Previous Box"
                         >
-                            &larr;
+                            ◀
                         </button>
-                        <span className="font-serif text-sm md:text-base font-bold text-[#3a3532] min-w-[8rem] text-center">
-                            BOX {selectedBox + 1}
-                        </span>
-                        <button 
-                            onClick={() => setSelectedBox((prev) => (prev < totalBoxes - 1 ? prev + 1 : 0))}
-                            className="p-2 bg-[#f4f1ea] rounded hover:bg-[#c19b6c]/20 hover:text-[#3a3532] transition-colors text-gray-500"
+
+                        <div className="text-center min-w-[7rem]">
+                            <span className="font-pixel text-[11px] font-bold text-[#282828] block">
+                                {currentBox.name?.trim() || `BOX ${selectedBox + 1}`}
+                            </span>
+                            <span className="text-[9px] text-[#606870] font-sans">
+                                {boxCount} / 30 POKéMON
+                            </span>
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                setSelectedBox((prev) => (prev < totalBoxes - 1 ? prev + 1 : 0));
+                            }}
+                            className="w-7 h-7 bg-white hover:bg-[#5080e6] hover:text-white text-[#282828] border-2 border-[#5080e6] rounded font-pixel text-xs flex items-center justify-center transition-all cursor-pointer active:scale-90 shadow-xs"
+                            title="Next Box"
                         >
-                            &rarr;
+                            ▶
                         </button>
                     </div>
                 </div>
 
-                {/* Box Grid */}
-                <div className="flex-grow flex flex-col items-center min-h-0 overflow-y-auto w-full">
-                    <div className="bg-[#fdfbf7] border border-[#dfd8ca]/60 p-4 sm:p-8 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] w-full max-w-4xl mx-auto backdrop-blur-sm relative">
-                        <div className="absolute inset-0 bg-gradient-to-b from-[#c19b6c]/5 to-transparent rounded-xl pointer-events-none"></div>
-                        <div className="grid grid-cols-6 gap-2 sm:gap-4 relative z-10">
-                            {currentBox.pokemon.map((p, i) => (
-                                <PokemonSlot 
-                                    key={i} 
-                                    pokemon={p} 
-                                    isSelected={selectedPokemon === p}
-                                    onClick={() => p && setSelectedPokemon(p)} 
-                                />
-                            ))}
+                {/* The Box Grid: Authentic FRLG White Rounded Window with Distinct Colored Border */}
+                <div className="frlg-pc-window p-4 sm:p-6 flex-1 flex flex-col justify-center relative overflow-hidden">
+                    {/* FRLG Box Header Strip */}
+                    <div className="flex justify-between items-center mb-4 pb-2 border-b-2 border-[#d4e2f0]">
+                        <div className="flex items-center gap-2">
+                            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#5080e6] border border-[#204070]" />
+                            <span className="font-pixel text-[10px] text-[#3058b8] font-bold uppercase">
+                                {currentBox.name?.trim() || `BOX ${selectedBox + 1}`} WALLPAPER
+                            </span>
                         </div>
+                        
+                        {/* Quick Box Jump Dropdown */}
+                        <div className="flex items-center gap-1.5 text-[10px] text-[#606870]">
+                            <span className="hidden sm:inline">Jump:</span>
+                            <select
+                                value={selectedBox}
+                                onChange={(e) => setSelectedBox(Number(e.target.value))}
+                                className="bg-[#f0f4f8] border border-[#a8bcd4] text-[#282828] rounded px-2 py-0.5 font-sans text-xs cursor-pointer focus:outline-none focus:border-[#5080e6]"
+                            >
+                                {saveFile.pokemonBoxes.map((b, idx) => {
+                                    const count = b.pokemon.filter(Boolean).length;
+                                    return (
+                                        <option key={idx} value={idx}>
+                                            Box {idx + 1} ({count}/30)
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* 30 Slots (6 cols x 5 rows) */}
+                    <div className="grid grid-cols-6 gap-2 sm:gap-3.5 my-auto max-w-2xl mx-auto w-full">
+                        {currentBox.pokemon.map((p, i) => (
+                            <PokemonSlot
+                                key={i}
+                                pokemon={p}
+                                slotNumber={i + 1}
+                                isSelected={selectedPokemon === p}
+                                onClick={() => p && setSelectedPokemon(p)}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Footer Hint Bar */}
+                    <div className="mt-4 pt-3 border-t border-[#d8e4f0] flex justify-between items-center text-[10px] text-[#606870] font-sans">
+                        <span>Click any Pokémon to open the FRLG Summary Screen</span>
+                        <span className="font-pixel text-[9px] text-[#5080e6]">
+                            SLOTS: 30
+                        </span>
                     </div>
                 </div>
             </div>
 
-            {/* Slide-out Stats Panel */}
-            {selectedPokemon && (
-                <div className="hidden md:flex flex-col w-1/3 bg-[#f4f1ea] border-l border-[#dfd8ca]/60 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] absolute right-0 top-0 bottom-0 overflow-y-auto animate-slide-in">
-                    <div className="flex justify-between items-start mb-6 border-b border-[#dfd8ca]/60 pb-4">
-                        <h2 className="text-xl font-bold font-serif text-[#3a3532]">DATA ENTRY</h2>
-                        <button onClick={() => setSelectedPokemon(null)} className="text-gray-500 hover:text-[#3a3532]">&times;</button>
-                    </div>
-                    
-                    <div className="flex flex-col items-center bg-[#fdfbf7]/50 rounded-xl p-4 border border-[#dfd8ca]/60 mb-6">
-                        <PokemonSprite species={selectedPokemon.species} alt="Sprite" className="w-32 h-32 object-contain drop-shadow-xl transition-transform duration-300 hover:scale-110" />
-                        <span className="text-xl font-bold font-serif text-[#3a3532] mt-4">{getDisplayName(selectedPokemon.nickname, selectedPokemon.species)}</span>
-                        <span className="text-sm font-serif text-gray-500 mt-1">Level {selectedPokemon.metLevel}</span>
-                    </div>
+            {/* Right Area: Authentic FRLG Summary Screen / PC Sidebar */}
+            <div className="w-full lg:w-[22rem] xl:w-[24rem] shrink-0">
+                {selectedPokemon ? (
+                    <div className="dialog-box p-4 shadow-md sticky top-20 animate-fade-in flex flex-col gap-4 max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-thin">
+                        {/* Summary Header Banner */}
+                        <div className="flex justify-between items-center pb-2 border-b-2 border-[#b8c8d8]">
+                            <div className="flex items-center gap-2">
+                                <span className="bg-[#e65050] text-white font-pixel text-[9px] px-2 py-0.5 rounded shadow-xs">
+                                    INFO
+                                </span>
+                                <h2 className="font-pixel text-[11px] font-bold text-[#282828]">
+                                    POKéMON SUMMARY
+                                </h2>
+                            </div>
+                            <button
+                                onClick={() => setSelectedPokemon(null)}
+                                className="font-pixel text-[10px] text-[#606870] hover:text-[#e65050] hover:bg-[#ffebee] px-2 py-1 rounded transition-colors cursor-pointer"
+                                title="Close Summary"
+                            >
+                                ✕
+                            </button>
+                        </div>
 
-                    <div className="space-y-6 font-serif text-sm">
-                        <div className="bg-[#fdfbf7] p-4 rounded-lg border border-[#dfd8ca]/60">
-                            <h3 className="text-gray-500 text-xs mb-3 border-b border-[#dfd8ca]/60 pb-1">GENETICS & EFFORT (IV / EV)</h3>
-                            <div className="space-y-2 text-xs font-serif">
-                                {[
-                                    { label: 'HP', iv: selectedPokemon.ivs[0], ev: selectedPokemon.evs[0], color: 'bg-green-500' },
-                                    { label: 'ATK', iv: selectedPokemon.ivs[1], ev: selectedPokemon.evs[1], color: 'bg-red-500' },
-                                    { label: 'DEF', iv: selectedPokemon.ivs[2], ev: selectedPokemon.evs[2], color: 'bg-orange-500' },
-                                    { label: 'SPE', iv: selectedPokemon.ivs[3], ev: selectedPokemon.evs[3], color: 'bg-pink-500' },
-                                    { label: 'SPA', iv: selectedPokemon.ivs[4], ev: selectedPokemon.evs[4], color: 'bg-blue-500' },
-                                    { label: 'SPD', iv: selectedPokemon.ivs[5], ev: selectedPokemon.evs[5], color: 'bg-purple-500' }
-                                ].map((stat) => (
-                                    <div key={stat.label} className="flex items-center gap-2">
-                                        <span className="text-gray-500 w-8">{stat.label}</span>
-                                        <div className="flex-1 bg-[#fdfbf7] rounded-full h-2 overflow-hidden flex relative group cursor-crosshair">
-                                            {/* IV Bar (Max 31) */}
-                                            <div className={`${stat.color} h-full opacity-70`} style={{ width: `${(stat.iv / 31) * 100}%` }}></div>
-                                            {/* EV Indicator (Max 255) */}
-                                            {stat.ev > 0 && (
-                                                <div className="absolute top-0 bottom-0 left-0 bg-[#fdfbf7]/30" style={{ width: `${(stat.ev / 255) * 100}%` }}></div>
-                                            )}
-                                        </div>
-                                        <div className="flex gap-1 text-right w-16">
-                                            <span className="text-gray-300 w-6">{stat.iv}</span>
-                                            <span className="text-gray-600">/</span>
-                                            <span className="text-gray-500 w-6">{stat.ev}</span>
-                                        </div>
-                                    </div>
-                                ))}
+                        {/* Top Profile Card: Sprite, Species, Nickname, Types */}
+                        <div className="bg-[#f0f5fa] border-2 border-[#b8cce0] rounded-lg p-3 flex items-center gap-3">
+                            <div className="relative w-20 h-20 bg-white rounded-lg border-2 border-[#98b4cc] flex items-center justify-center shrink-0 shadow-inner">
+                                <PokemonSprite
+                                    species={selectedPokemon.species}
+                                    alt={getDisplayName(selectedPokemon.nickname, selectedPokemon.species)}
+                                    className="w-18 h-18 object-contain drop-shadow-sm transition-transform hover:scale-110"
+                                />
+                                {isShiny(selectedPokemon) && (
+                                    <span 
+                                        className="absolute top-1 right-1 text-amber-500 text-xs animate-pulse" 
+                                        title="Shiny Pokémon!"
+                                    >
+                                        ★
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-pixel text-[11px] font-bold text-[#282828] truncate block">
+                                        {getDisplayName(selectedPokemon.nickname, selectedPokemon.species)}
+                                    </span>
+                                </div>
+                                <span className="text-[11px] text-[#506878] font-sans font-semibold block mt-0.5">
+                                    No.{getNationalDexId(selectedPokemon.species).toString().padStart(3, '0')}{' '}
+                                    {getPokemonName(getNationalDexId(selectedPokemon.species))}
+                                </span>
+
+                                <div className="flex items-center gap-2 mt-1.5">
+                                    <span className="bg-[#eef2f7] border border-[#b0c4d8] text-[#282828] text-[10px] font-pixel px-1.5 py-0.5 rounded font-bold">
+                                        Lv.{selectedPokemon.metLevel}
+                                    </span>
+                                    <span className="text-[10px] text-[#606870]">
+                                        {getPokeballName(selectedPokemon.pokeBall)}
+                                    </span>
+                                </div>
+
+                                {/* Type Badges */}
+                                <div className="flex gap-1.5 mt-2">
+                                    {(() => {
+                                        const typeInfo = getPokemonTypes(selectedPokemon.species);
+                                        const t1 = TYPE_BADGE_STYLES[typeInfo.primary] || TYPE_BADGE_STYLES.NORMAL;
+                                        return (
+                                            <>
+                                                <span
+                                                    className="font-pixel text-[8px] font-bold px-2 py-0.5 rounded text-white shadow-xs"
+                                                    style={{ backgroundColor: t1.bg, borderColor: t1.border }}
+                                                >
+                                                    {typeInfo.primary}
+                                                </span>
+                                                {typeInfo.secondary && (() => {
+                                                    const t2 = TYPE_BADGE_STYLES[typeInfo.secondary] || TYPE_BADGE_STYLES.NORMAL;
+                                                    return (
+                                                        <span
+                                                            className="font-pixel text-[8px] font-bold px-2 py-0.5 rounded text-white shadow-xs"
+                                                            style={{ backgroundColor: t2.bg, borderColor: t2.border }}
+                                                        >
+                                                            {typeInfo.secondary}
+                                                        </span>
+                                                    );
+                                                })()}
+                                            </>
+                                        );
+                                    })()}
+                                </div>
                             </div>
                         </div>
 
-                        <div className="bg-[#fdfbf7] p-4 rounded-lg border border-[#dfd8ca]/60">
-                            <h3 className="text-gray-500 text-xs mb-3 border-b border-[#dfd8ca]/60 pb-1">ORIGIN</h3>
-                            <div className="grid grid-cols-1 gap-y-2 text-gray-300">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">MET AT:</span> 
-                                    <span>Lv. {selectedPokemon.metLevel}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">OT ID:</span> 
-                                    <span>{selectedPokemon.otid.toString().padStart(5, '0')}</span>
-                                </div>
+                        {/* FRLG Stat Screen: Tabular Data with Pixel-Perfect Borders & Alternating Rows */}
+                        <div className="frlg-table-container">
+                            <div className="bg-[#3058b8] text-white font-pixel text-[9px] px-3 py-1.5 font-bold flex justify-between items-center">
+                                <span>POKéMON STATS</span>
+                                <span className="text-[8px] text-[#b0c8ff]">IV / EV</span>
+                            </div>
+                            <table className="frlg-table">
+                                <thead>
+                                    <tr>
+                                        <th style={{ width: '28%' }}>STAT</th>
+                                        <th style={{ width: '38%' }}>GRAPH</th>
+                                        <th style={{ width: '17%', textAlign: 'right' }}>IV</th>
+                                        <th style={{ width: '17%', textAlign: 'right' }}>EV</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {[
+                                        { label: 'HP', iv: selectedPokemon.ivs[0], ev: selectedPokemon.evs[0], color: '#389858' },
+                                        { label: 'ATTACK', iv: selectedPokemon.ivs[1], ev: selectedPokemon.evs[1], color: '#e65050' },
+                                        { label: 'DEFENSE', iv: selectedPokemon.ivs[2], ev: selectedPokemon.evs[2], color: '#e69820' },
+                                        { label: 'SP. ATK', iv: selectedPokemon.ivs[4], ev: selectedPokemon.evs[4], color: '#5080e6' },
+                                        { label: 'SP. DEF', iv: selectedPokemon.ivs[5], ev: selectedPokemon.evs[5], color: '#7860c8' },
+                                        { label: 'SPEED', iv: selectedPokemon.ivs[3], ev: selectedPokemon.evs[3], color: '#e65098' },
+                                    ].map((s) => (
+                                        <tr key={s.label}>
+                                            <td className="font-pixel text-[9px] font-bold text-[#384858]">
+                                                {s.label}
+                                            </td>
+                                            <td>
+                                                <div className="w-full bg-[#d8e4f0] h-2.5 rounded-sm overflow-hidden border border-[#a8bcd0] relative">
+                                                    <div
+                                                        className="h-full rounded-xs transition-all duration-300"
+                                                        style={{
+                                                            width: `${Math.min(100, Math.max(8, (s.iv / 31) * 100))}%`,
+                                                            backgroundColor: s.color,
+                                                        }}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="text-right font-pixel text-[9px] font-bold text-[#282828]">
+                                                {s.iv}
+                                            </td>
+                                            <td className="text-right font-sans text-xs text-[#606870]">
+                                                {s.ev}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Origin & Trainer Info Panel */}
+                        <div className="bg-[#f8fafc] border-2 border-[#b8c8d8] rounded-lg p-3 text-xs space-y-2">
+                            <div className="flex justify-between items-center text-[10px] pb-1.5 border-b border-[#e0e8f0]">
+                                <span className="font-pixel text-[9px] text-[#606870]">NATURE</span>
+                                <span className="font-bold text-[#282828]">
+                                    {getNature(selectedPokemon.pid)} Nature
+                                </span>
+                            </div>
+
+                            <div className="flex justify-between items-center text-[10px] pb-1.5 border-b border-[#e0e8f0]">
+                                <span className="font-pixel text-[9px] text-[#606870]">ORIGIN</span>
+                                <span className="text-[#282828]">
+                                    {getGameName(selectedPokemon.gameOfOrigin)} · Met at Lv.{selectedPokemon.metLevel}
+                                </span>
+                            </div>
+
+                            <div className="flex justify-between items-center text-[10px] pb-1.5 border-b border-[#e0e8f0]">
+                                <span className="font-pixel text-[9px] text-[#606870]">TRAINER</span>
+                                <span className="font-mono text-[#282828]">
+                                    {selectedPokemon.otName || 'TRAINER'} (ID: {selectedPokemon.otid.toString().padStart(5, '0')})
+                                </span>
+                            </div>
+
+                            <div className="flex justify-between items-center text-[10px]">
+                                <span className="font-pixel text-[9px] text-[#606870]">PID</span>
+                                <span className="font-mono text-[9px] text-[#5080e6]">
+                                    0x{selectedPokemon.pid.toString(16).toUpperCase().padStart(8, '0')}
+                                </span>
                             </div>
                         </div>
+
+                        {/* Forensic Legitimacy Verdict Badge */}
+                        {selectedPokemon.verdict && (
+                            <div className={`p-3 rounded-lg border-2 text-xs ${
+                                selectedPokemon.verdict.tier === 'VERIFIED'
+                                    ? 'bg-[#eef8f2] border-[#389858] text-[#246e3a]'
+                                    : selectedPokemon.verdict.tier === 'UNCERTAIN'
+                                    ? 'bg-[#fef9ee] border-[#e69820] text-[#a06208]'
+                                    : 'bg-[#feeeee] border-[#e65050] text-[#b83030]'
+                            }`}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <span className="font-pixel text-[9px] font-bold tracking-wider">
+                                        VERDICT: {selectedPokemon.verdict.tier}
+                                    </span>
+                                    <span className="font-bold text-xs">
+                                        {selectedPokemon.verdict.tier === 'VERIFIED' ? '✓' : selectedPokemon.verdict.tier === 'UNCERTAIN' ? '?' : '✗'}
+                                    </span>
+                                </div>
+                                <ul className="space-y-1 text-[11px] font-sans">
+                                    {selectedPokemon.verdict.evidence.map((ev, i) => (
+                                        <li key={i} className="flex items-start gap-1.5">
+                                            <span className="text-[10px] leading-tight">▸</span>
+                                            <span>{ev}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
-                </div>
-            )}
-            
-            {/* Mobile Modal (Visible only on small screens when a Pokemon is selected) */}
-            {selectedPokemon && (
-                <div className="md:hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-                    <div className="bg-[#f4f1ea] border border-[#dfd8ca]/60 rounded-xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] w-full max-w-sm overflow-y-auto max-h-[90vh]">
-                        <div className="flex justify-between items-start mb-6 border-b border-[#dfd8ca]/60 pb-4">
-                            <h2 className="text-xl font-bold font-serif text-[#3a3532]">DATA ENTRY</h2>
-                            <button onClick={() => setSelectedPokemon(null)} className="text-gray-500 hover:text-[#3a3532] text-2xl leading-none">&times;</button>
+                ) : (
+                    /* Standby / Empty Selection Card */
+                    <div className="dialog-box p-6 shadow-sm sticky top-20 text-center flex flex-col items-center justify-center min-h-[22rem]">
+                        <div className="w-16 h-16 rounded-full bg-[#eef2f7] border-2 border-[#b8c8d8] flex items-center justify-center mb-4 text-2xl text-[#5080e6] shadow-inner">
+                            🔍
                         </div>
-                        <div className="flex flex-col items-center bg-[#fdfbf7]/50 rounded-xl p-4 border border-[#dfd8ca]/60 mb-6">
-                            <PokemonSprite species={selectedPokemon.species} alt="Sprite" className="w-32 h-32 object-contain drop-shadow-xl transition-transform duration-300 hover:scale-110" />
-                            <span className="text-xl font-bold font-serif text-[#3a3532] mt-4">{getDisplayName(selectedPokemon.nickname, selectedPokemon.species)}</span>
-                            <span className="text-sm font-serif text-gray-500 mt-1">Level {selectedPokemon.metLevel}</span>
+                        <h3 className="font-pixel text-xs font-bold text-[#282828] mb-2">
+                            FRLG PC VIEWER
+                        </h3>
+                        <p className="text-xs text-[#606870] font-sans leading-relaxed max-w-xs mb-4">
+                            Select any Pokémon from the 30 PC slots to inspect its full summary, stats, IV/EV graphs, and memory forensics.
+                        </p>
+                        <div className="bg-[#f0f4f8] border border-[#c4d4e8] rounded-md px-3 py-2 text-[10px] text-[#506878] font-pixel">
+                            BOX {selectedBox + 1}: {boxCount} / 30 STORED
                         </div>
-                        <button onClick={() => setSelectedPokemon(null)} className="w-full bg-red-600 text-[#3a3532] font-serif py-3 rounded-lg mt-4">CLOSE</button>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };
 
-const PokemonSlot = ({ pokemon, isSelected, onClick }: { pokemon: Pokemon | null; isSelected: boolean; onClick: () => void }) => {
+interface PokemonSlotProps {
+    pokemon: Pokemon | null;
+    slotNumber: number;
+    isSelected: boolean;
+    onClick: () => void;
+}
+
+const PokemonSlot: React.FC<PokemonSlotProps> = ({
+    pokemon,
+    slotNumber,
+    isSelected,
+    onClick,
+}) => {
     if (!pokemon) {
         return (
-            <div className="aspect-square bg-black/40 rounded-lg border border-[#dfd8ca]/60/50 shadow-inner"></div>
+            <div className="aspect-square bg-[#f0f4f8]/60 border-2 border-dashed border-[#c8d4e4] rounded-lg flex items-center justify-center text-[9px] font-pixel text-[#a8b8c8] select-none">
+                {slotNumber}
+            </div>
         );
     }
 
     return (
-        <div 
+        <button
             onClick={onClick}
-            className={`aspect-square bg-[#f4f1ea]/80 rounded-lg border flex items-center justify-center p-1 cursor-pointer transition-all hover:scale-105 hover:z-10 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] ${isSelected ? 'border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)] bg-red-900/20' : 'border-gray-700'}`}
+            className={`aspect-square frlg-slot flex flex-col items-center justify-center p-1 cursor-pointer relative group ${
+                isSelected ? 'frlg-slot-selected' : ''
+            }`}
+            title={`${getDisplayName(pokemon.nickname, pokemon.species)} (Lv. ${pokemon.metLevel})`}
         >
-            <PokemonSprite 
-                species={pokemon.species} 
-                alt="Sprite" 
-                className="w-full h-full object-contain p-1 transition-transform duration-300 group-hover:scale-125 drop-shadow-sm" 
+            <PokemonSprite
+                species={pokemon.species}
+                alt={getDisplayName(pokemon.nickname, pokemon.species)}
+                className="w-full h-full object-contain p-0.5 transition-transform duration-200 group-hover:scale-115 drop-shadow-xs"
             />
-        </div>
+
+            {/* Micro Level Tag */}
+            <span className="absolute bottom-0.5 right-1 font-pixel text-[7px] text-[#606870] group-hover:text-[#282828] bg-white/80 px-0.5 rounded leading-none">
+                {pokemon.metLevel}
+            </span>
+
+            {/* Shiny Micro Indicator */}
+            {isShiny(pokemon) && (
+                <span className="absolute top-0.5 left-1 text-[8px] text-amber-500 leading-none">
+                    ★
+                </span>
+            )}
+        </button>
     );
 };

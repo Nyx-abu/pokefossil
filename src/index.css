@@ -2,44 +2,206 @@
 @import "tailwindcss";
 
 :root {
-  /* Minimalist "Aged Photo Album" Color Palette */
-  --background: #f4f1ea;
-  --bg-primary: #f4f1ea;
-  --bg-paper: #f4f1ea;
-  --primary-text: #3a3532;
-  --text-primary: #3a3532;
-  --text-charcoal: #3a3532;
-  --accent: #c19b6c;
-  --accent-gold: #c19b6c;
-  --accent-brass: #c19b6c;
-  --color-accent: #c19b6c;
+  /* Authentic Pokémon FireRed / LeafGreen (GBA) Color Palette */
+  --frlg-bg-light: #f8f8f8;
+  --frlg-bg-panel: #eef2f7;
+  --frlg-bg-dark: #202428;
+  --frlg-red: #e65050;
+  --frlg-red-dark: #b83030;
+  --frlg-red-light: #ff6b6b;
+  --frlg-blue: #5080e6;
+  --frlg-blue-dark: #3058b8;
+  --frlg-blue-light: #6c9cff;
+  --frlg-green: #389858;
+  --frlg-green-dark: #246e3a;
+  --frlg-yellow: #f8b800;
+  --frlg-amber: #e69820;
+  --frlg-border-dark: #384048;
+  --frlg-border-light: #c8d4e4;
+  --frlg-text-dark: #282828;
+  --frlg-text-muted: #606870;
+  --frlg-text-light: #f8f8f8;
+  --frlg-panel-border: #485058;
 
-  /* Verdict indicators */
-  --color-verdict-verified: #5d7e5d;
-  --color-verdict-uncertain: #c19b6c;
-  --color-verdict-modified: #a04949;
-  --color-verdict-ghost: #9c88e0;
+  /* Verdict indicators & brand tokens for compatibility */
+  --color-brand-accent: var(--frlg-red);
+  --color-verdict-verified: var(--frlg-green);
+  --color-verdict-uncertain: var(--frlg-amber);
+  --color-verdict-modified: var(--frlg-red);
+  --color-verdict-ghost: #7860c8;
 }
 
 @theme {
+  --font-pixel: 'Press Start 2P', sans-serif;
   --font-serif: 'Lora', Georgia, serif;
-  --color-brand-accent: #c19b6c; /* Muted warm gold/brass */
-  --color-verdict-verified: #5d7e5d; /* Muted green */
-  --color-verdict-uncertain: #c19b6c; /* Muted gold */
-  --color-verdict-modified: #a04949; /* Muted red */
-  --color-verdict-ghost: #9c88e0;
+  --color-frlg-red: #e65050;
+  --color-frlg-blue: #5080e6;
+  --color-frlg-green: #389858;
+  --color-frlg-bg-light: #f8f8f8;
+  --color-brand-accent: #e65050;
+  --color-verdict-verified: #389858;
+  --color-verdict-uncertain: #e69820;
+  --color-verdict-modified: #e65050;
+  --color-verdict-ghost: #7860c8;
 }
 
 @layer base {
   body {
-    background-color: var(--background, #f4f1ea);
-    color: var(--primary-text, #3a3532);
-    font-family: 'Lora', Georgia, serif; /* Narrative prose default */
+    background-color: var(--frlg-bg-light, #f8f8f8);
+    color: var(--frlg-text-dark, #282828);
+    font-family: 'Press Start 2P', sans-serif;
     overflow-x: hidden;
   }
 }
 
 @layer utilities {
+  /* Authentic FRLG GBA Dialog Boxes */
+  .dialog-box {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 4px solid var(--frlg-blue, #5080e6);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    color: var(--frlg-text-dark, #282828);
+  }
+
+  .dialog-box-red {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 4px solid var(--frlg-red, #e65050);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    color: var(--frlg-text-dark, #282828);
+  }
+
+  .dialog-box-blue {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 4px solid var(--frlg-blue, #5080e6);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    color: var(--frlg-text-dark, #282828);
+  }
+
+  .dialog-box-green {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 4px solid var(--frlg-green, #389858);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    color: var(--frlg-text-dark, #282828);
+  }
+
+  .dialog-box-amber {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 4px solid var(--frlg-amber, #e69820);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    color: var(--frlg-text-dark, #282828);
+  }
+
+  /* FRLG Bill's PC Window & Slots */
+  .frlg-pc-window {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 4px solid var(--frlg-blue, #5080e6);
+    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #b0c8f0, 0 4px 12px rgba(80, 128, 230, 0.15);
+  }
+
+  .frlg-slot {
+    background-color: #f6f9fc;
+    border: 2px solid #c4d4e8;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.15s ease-in-out;
+  }
+
+  .frlg-slot:hover {
+    border-color: #e65050;
+    background-color: #fff5f5;
+    box-shadow: 0 0 0 2px #ff8c8c, 0 4px 8px rgba(230, 80, 80, 0.2);
+    transform: scale(1.05);
+    z-index: 10;
+  }
+
+  .frlg-slot-selected {
+    border-color: #e65050 !important;
+    background-color: #ffebeb !important;
+    box-shadow: 0 0 0 3px #ff6b6b, 0 4px 12px rgba(230, 80, 80, 0.3) !important;
+    transform: scale(1.06) !important;
+    z-index: 20;
+  }
+
+  /* GBA Stat Screen Table Styling with Pixel-Perfect Borders & Alternating Rows */
+  .frlg-table-container {
+    border: 3px solid #384858;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .frlg-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.65rem;
+    line-height: 1.4;
+  }
+
+  .frlg-table th {
+    background-color: #3860a0;
+    color: #ffffff;
+    padding: 8px 10px;
+    font-weight: 700;
+    text-align: left;
+    border-bottom: 2px solid #204070;
+    border-right: 1px solid #4d7bc4;
+    letter-spacing: 0.03em;
+  }
+
+  .frlg-table th:last-child {
+    border-right: none;
+  }
+
+  .frlg-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #d8e2ec;
+    border-right: 1px solid #e8eff6;
+    color: #282828;
+  }
+
+  .frlg-table td:last-child {
+    border-right: none;
+  }
+
+  .frlg-table tr:nth-child(even) td {
+    background-color: #f5f8fb;
+  }
+
+  .frlg-table tr:nth-child(odd) td {
+    background-color: #ffffff;
+  }
+
+  .frlg-table tr:hover td {
+    background-color: #eaf2fc;
+  }
+
+  /* Subtle tiled FRLG background pattern */
+  .frlg-bg-pattern {
+    background-color: #eef2f7;
+    background-image: 
+      linear-gradient(rgba(80, 128, 230, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(80, 128, 230, 0.04) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  .frlg-bg-dots {
+    background-color: #eef2f7;
+    background-image: radial-gradient(#c8d4e4 1.5px, transparent 1.5px);
+    background-size: 16px 16px;
+  }
+
   .font-raw-data {
     font-family: 'Press Start 2P', 'Silkscreen', monospace;
     font-size: 0.9em;
@@ -78,7 +240,7 @@
     @apply px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-900 border-b-2 border-transparent transition-colors;
   }
   .explore-tab.active {
-    @apply border-[#c19b6c] text-[#3a3532];
+    @apply border-[#e65050] text-[#282828];
   }
 
   /* Scrollbar utilities */
@@ -98,11 +260,11 @@
     background: rgba(0, 0, 0, 0.05);
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(58, 53, 50, 0.2);
+    background: rgba(40, 40, 40, 0.2);
     border-radius: 3px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(58, 53, 50, 0.4);
+    background: rgba(40, 40, 40, 0.4);
   }
 
   .animate-fade-in {
@@ -112,34 +274,11 @@
   .animate-slide-in {
     animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  
-  .noise-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 50;
-    opacity: 0.25;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  }
 
-  .vignette-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 40;
-    background: radial-gradient(circle, transparent 50%, rgba(58, 53, 50, 0.08) 150%);
-  }
-  
   .photo-fade-in {
     animation: photoFadeIn 0.7s ease-out forwards;
   }
-  
+
   .photo-fade-in-delayed-1 {
     opacity: 0;
     animation: photoFadeIn 0.7s ease-out 0.8s forwards;
@@ -150,12 +289,19 @@
     animation: photoFadeIn 0.7s ease-out 1.6s forwards;
   }
 
-  .float-animation {
-    animation: floatAnim 3s ease-in-out infinite;
+  .dialog-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 11px solid #e03838;
+    animation: gbaArrowBounce 0.55s infinite ease-in-out;
+    filter: drop-shadow(0 1px 0 #282828);
   }
-  
-  .sprite-sepia {
-    filter: sepia(0.3) contrast(0.9) brightness(0.95);
+
+  .press-start-cue {
+    animation: pressStartBlink 1.2s infinite steps(2, start);
   }
 }
 
@@ -193,10 +339,20 @@
   }
 }
 
-@keyframes floatAnim {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-2px); }
-  100% { transform: translateY(0px); }
+@keyframes gbaArrowBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
 }
 
-
+@keyframes pressStartBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
