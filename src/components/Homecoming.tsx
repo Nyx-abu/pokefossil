@@ -348,7 +348,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                     <img
                                         src={`https://play.pokemonshowdown.com/sprites/trainers/${gameInfo.trainerSprite}.png`}
                                         alt={trainerName}
-                                        className="w-24 h-24 sm:w-28 sm:h-28 object-contain pixelated drop-shadow-md"
+                                        className="w-32 h-32 sm:w-40 sm:h-40 object-contain pixelated drop-shadow-md"
                                         onError={(e) => {
                                             (e.currentTarget as HTMLImageElement).style.display = 'none';
                                         }}
@@ -397,7 +397,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                                 >
                                                     {/* Pokémon Sprite: Full Color, Crisp, No Sepia, No Grayscale */}
                                                     <div className="relative flex flex-col items-center">
-                                                        <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center z-10">
+                                                        <div className="w-20 h-20 sm:w-28 sm:h-28 flex items-center justify-center z-10">
                                                             <PokemonSprite
                                                                 species={mon.species}
                                                                 alt={nickname || speciesName}
@@ -443,7 +443,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                 {/* Starter Mon Platform */}
                                 <div className="flex flex-col items-center text-center">
                                     <div className="relative flex flex-col items-center">
-                                        <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center z-10">
+                                        <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center z-10">
                                             <PokemonSprite
                                                 species={starterInfo.species}
                                                 alt={starterInfo.starterSpecies}
@@ -469,7 +469,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                 {firstBadgeCompanion ? (
                                     <div className="flex flex-col items-center text-center">
                                         <div className="relative flex flex-col items-center">
-                                            <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center z-10">
+                                            <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center z-10">
                                                 <PokemonSprite
                                                     species={firstBadgeCompanion.species}
                                                     alt={firstBadgeCompanion.speciesName}
@@ -514,7 +514,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                 <>
                                     {/* Crisp, Full Color Sprite on Clean Background (No Sepia, No Grayscale) */}
                                     <div className="relative flex flex-col items-center">
-                                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center z-10">
+                                        <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center z-10">
                                             <PokemonSprite
                                                 species={ghostData.species}
                                                 alt={ghostData.nickname}
@@ -555,7 +555,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                         <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-lg">
                             {/* Game Cartridge / Pokédex emblem */}
                             <div className="relative flex flex-col items-center">
-                                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white border-2 border-[#303848] flex items-center justify-center shadow-md p-3">
+                                <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl bg-white border-2 border-[#303848] flex items-center justify-center shadow-md p-3">
                                     <img
                                         src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
                                         alt="Poké Ball"

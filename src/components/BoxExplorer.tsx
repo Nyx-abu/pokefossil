@@ -127,7 +127,7 @@ export const BoxExplorer: React.FC = () => {
                     </div>
 
                     {/* 30 Slots (6 cols x 5 rows) */}
-                    <div className="grid grid-cols-6 gap-2 sm:gap-3.5 my-auto max-w-2xl mx-auto w-full">
+                    <div className="grid grid-cols-6 gap-2 sm:gap-3.5 my-auto max-w-4xl mx-auto w-full">
                         {currentBox.pokemon.map((p, i) => (
                             <PokemonSlot
                                 key={i}
@@ -150,7 +150,7 @@ export const BoxExplorer: React.FC = () => {
             </div>
 
             {/* Right Area: Authentic FRLG Summary Screen / PC Sidebar */}
-            <div className="w-full lg:w-[22rem] xl:w-[24rem] shrink-0">
+            <div className="w-full lg:w-[24rem] xl:w-[26rem] shrink-0">
                 {selectedPokemon ? (
                     <div className="dialog-box p-4 shadow-md sticky top-20 animate-fade-in flex flex-col gap-4 max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-thin">
                         {/* Summary Header Banner */}
@@ -174,11 +174,11 @@ export const BoxExplorer: React.FC = () => {
 
                         {/* Top Profile Card: Sprite, Species, Nickname, Types */}
                         <div className="bg-[#f0f5fa] border-2 border-[#b8cce0] rounded-lg p-3 flex items-center gap-3">
-                            <div className="relative w-20 h-20 bg-white rounded-lg border-2 border-[#98b4cc] flex items-center justify-center shrink-0 shadow-inner">
+                            <div className="relative w-28 h-28 bg-white rounded-lg border-2 border-[#98b4cc] flex items-center justify-center shrink-0 shadow-inner">
                                 <PokemonSprite
                                     species={selectedPokemon.species}
                                     alt={getDisplayName(selectedPokemon.nickname, selectedPokemon.species)}
-                                    className="w-18 h-18 object-contain drop-shadow-sm transition-transform hover:scale-110"
+                                    className="w-24 h-24 object-contain drop-shadow-sm transition-transform hover:scale-110"
                                 />
                                 {isShiny(selectedPokemon) && (
                                     <span 
@@ -218,7 +218,7 @@ export const BoxExplorer: React.FC = () => {
                                         return (
                                             <>
                                                 <span
-                                                    className="font-pixel text-[8px] font-bold px-2 py-0.5 rounded text-white shadow-xs"
+                                                    className="font-pixel text-[10px] font-bold px-3 py-1 rounded border shadow-sm text-white shadow-xs"
                                                     style={{ backgroundColor: t1.bg, borderColor: t1.border }}
                                                 >
                                                     {typeInfo.primary}
@@ -227,7 +227,7 @@ export const BoxExplorer: React.FC = () => {
                                                     const t2 = TYPE_BADGE_STYLES[typeInfo.secondary] || TYPE_BADGE_STYLES.NORMAL;
                                                     return (
                                                         <span
-                                                            className="font-pixel text-[8px] font-bold px-2 py-0.5 rounded text-white shadow-xs"
+                                                            className="font-pixel text-[10px] font-bold px-3 py-1 rounded border shadow-sm text-white shadow-xs"
                                                             style={{ backgroundColor: t2.bg, borderColor: t2.border }}
                                                         >
                                                             {typeInfo.secondary}
@@ -388,7 +388,7 @@ const PokemonSlot: React.FC<PokemonSlotProps> = ({
 }) => {
     if (!pokemon) {
         return (
-            <div className="aspect-square bg-[#f0f4f8]/60 border-2 border-dashed border-[#c8d4e4] rounded-lg flex items-center justify-center text-[9px] font-pixel text-[#a8b8c8] select-none">
+            <div className="aspect-square bg-[#f0f4f8]/60 border-2 border-dashed border-[#c8d4e4] rounded-lg flex items-center justify-center text-[12px] font-pixel text-[#a8b8c8] select-none">
                 {slotNumber}
             </div>
         );

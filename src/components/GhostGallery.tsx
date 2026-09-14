@@ -94,11 +94,11 @@ export const GhostGallery: React.FC = () => {
                                 className="dialog-box p-4 flex flex-col sm:flex-row gap-4 shadow-xs hover:border-[#7860c8] transition-colors"
                             >
                                 {/* Left: Framed Ghost Sprite */}
-                                <div className="w-24 h-24 sm:w-28 sm:h-28 bg-[#f5f8fb] rounded-lg border-2 border-[#b8c8d8] flex-shrink-0 flex items-center justify-center p-2 relative shadow-inner self-center sm:self-start">
+                                <div className="w-32 h-32 sm:w-36 sm:h-36 bg-[#f5f8fb] rounded-lg border-2 border-[#b8c8d8] flex-shrink-0 flex items-center justify-center p-2 relative shadow-inner self-center sm:self-start">
                                     <PokemonSprite
                                         species={g.pokemon.species}
                                         alt={getDisplayName(g.pokemon.nickname, g.pokemon.species)}
-                                        className="w-20 h-20 object-contain drop-shadow-sm opacity-85 filter contrast-90"
+                                        className="w-28 h-28 object-contain drop-shadow-sm opacity-85 filter contrast-90"
                                     />
                                     <span className="absolute bottom-1 right-1 font-pixel text-[8px] bg-white/90 px-1 rounded border border-[#b8c8d8] text-[#7860c8]">
                                         GHOST
@@ -130,7 +130,7 @@ export const GhostGallery: React.FC = () => {
                                         {/* Type & Location Badges */}
                                         <div className="flex items-center gap-2 mb-2.5 flex-wrap">
                                             <span
-                                                className="font-pixel text-[8px] font-bold px-2 py-0.5 rounded text-white shadow-xs"
+                                                className="font-pixel text-[10px] font-bold px-3 py-1 rounded border shadow-sm text-white shadow-xs"
                                                 style={{ backgroundColor: t1.bg }}
                                             >
                                                 {typeInfo.primary}
