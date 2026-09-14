@@ -3,6 +3,7 @@ import { SaveFile, Pokemon } from '../parser/types';
 import { GhostRecord } from '../parser/ghosts';
 import { JourneyEvent } from '../parser/timeline';
 import { PokemonSprite } from './PokemonSprite';
+import { SceneScenery } from './SceneScenery';
 import { getNationalDexId } from '../utils/speciesMapping';
 import { getPokemonName, getDisplayName } from '../utils/pokemonNames';
 
@@ -58,6 +59,29 @@ const STARTER_FAMILIES: Record<number, { starterName: string; formName: string }
     258: { starterName: 'Mudkip', formName: 'Mudkip' },
     259: { starterName: 'Mudkip', formName: 'Marshtomp' },
     260: { starterName: 'Mudkip', formName: 'Swampert' },
+};
+
+const REGION_BADGES: Record<string, Array<{ name: string; color: string; city: string; leader: string; symbol: string }>> = {
+    Kanto: [
+        { name: 'Boulder', color: '#9e9e9e', city: 'Pewter', leader: 'Brock', symbol: '◆' },
+        { name: 'Cascade', color: '#29b6f6', city: 'Cerulean', leader: 'Misty', symbol: '💧' },
+        { name: 'Thunder', color: '#ffca28', city: 'Vermilion', leader: 'Lt. Surge', symbol: '⚡' },
+        { name: 'Rainbow', color: '#7cb342', city: 'Celadon', leader: 'Erika', symbol: '🌸' },
+        { name: 'Soul', color: '#ec407a', city: 'Fuchsia', leader: 'Koga', symbol: '♥' },
+        { name: 'Marsh', color: '#ffa726', city: 'Saffron', leader: 'Sabrina', symbol: '◉' },
+        { name: 'Volcano', color: '#ff7043', city: 'Cinnabar', leader: 'Blaine', symbol: '🔥' },
+        { name: 'Earth', color: '#43a047', city: 'Viridian', leader: 'Giovanni', symbol: '🌱' },
+    ],
+    Hoenn: [
+        { name: 'Stone', color: '#78909c', city: 'Rustboro', leader: 'Roxanne', symbol: '◆' },
+        { name: 'Knuckle', color: '#8d6e63', city: 'Dewford', leader: 'Brawly', symbol: '✊' },
+        { name: 'Dynamo', color: '#fbc02d', city: 'Mauville', leader: 'Wattson', symbol: '⚡' },
+        { name: 'Heat', color: '#ff7043', city: 'Lavaridge', leader: 'Flannery', symbol: '🔥' },
+        { name: 'Balance', color: '#e53935', city: 'Petalburg', leader: 'Norman', symbol: '⚖' },
+        { name: 'Feather', color: '#4fc3f7', city: 'Fortree', leader: 'Winona', symbol: '🪶' },
+        { name: 'Mind', color: '#ab47bc', city: 'Mossdeep', leader: 'Tate & Liza', symbol: '👁' },
+        { name: 'Rain', color: '#1e88e5', city: 'Sootopolis', leader: 'Wallace', symbol: '💧' },
+    ],
 };
 
 export const Homecoming: React.FC<HomecomingProps> = ({
@@ -284,17 +308,30 @@ export const Homecoming: React.FC<HomecomingProps> = ({
         };
     }, [ghost, saveFile.inactiveBlock, saveIndex]);
 
+    // Dynamic scene background based on current story beat
+    const sceneBgClass = useMemo(() => {
+        switch (beat) {
+            case 1: return 'gba-scene-lab';
+            case 2: return 'gba-scene-hall-of-fame';
+            case 3: return 'gba-scene-route';
+            case 4: return 'gba-scene-tower';
+            case 5: return 'gba-scene-hall-of-fame';
+            default: return 'gba-scene-hall-of-fame';
+        }
+    }, [beat]);
+
     return (
         <div 
-            className="min-h-screen w-full flex flex-col justify-between select-none relative cursor-pointer overflow-hidden bg-[#e8eef4]"
+            className={`min-h-screen w-full flex flex-col justify-between select-none relative cursor-pointer overflow-hidden ${sceneBgClass}`}
             onClick={handleNext}
         >
             {/* Top Navigation Bar */}
-            <header className="w-full flex justify-between items-center px-4 sm:px-8 py-3 z-30 bg-white/70 backdrop-blur border-b border-[#303848]/10 text-xs font-raw-data text-[#303848]">
+            <header className="w-full flex justify-between items-center px-4 sm:px-8 py-3 z-30 bg-white/85 backdrop-blur border-b-2 border-[#303848]/20 text-xs font-raw-data text-[#303848] shadow-xs">
                 <div className="flex items-center gap-3">
-                    <span className="font-bold text-[#d8382c]">POKéFOSSIL</span>
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#e65050] inline-block border-2 border-[#384048] shadow-xs" />
+                    <span className="font-bold text-[#d8382c] tracking-wider text-xs sm:text-sm">POKéFOSSIL</span>
                     <span className="text-[#8898a8] hidden sm:inline">|</span>
-                    <span className="text-[#606878] hidden sm:inline">{gameInfo.title}</span>
+                    <span className="text-[#485868] hidden sm:inline font-bold">{gameInfo.title}</span>
                 </div>
 
                 {/* Beat Indicator Dots & Skip Action */}
@@ -322,7 +359,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                             e.stopPropagation();
                             onSkip();
                         }}
-                        className="px-2.5 py-1 rounded bg-[#303848]/10 hover:bg-[#303848]/20 text-[#303848] text-[10px] tracking-wider transition-colors"
+                        className="px-2.5 py-1 rounded bg-[#303848]/10 hover:bg-[#303848]/20 text-[#303848] text-[10px] tracking-wider transition-colors border border-[#303848]/20 font-bold"
                         title="Skip to Explore Mode"
                     >
                         SKIP (ESC) →
@@ -330,10 +367,13 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                 </div>
             </header>
 
+            {/* Environmental Pixel Art Scenery Layer */}
+            <SceneScenery beat={beat} region={gameInfo.region} />
+
             {/* Upper Stage: Clean GBA Visual Arena with crisp, full-color sprites */}
-            <main className="flex-1 w-full flex items-center justify-center p-4 relative z-10">
+            <main className="flex-1 w-full flex items-center justify-center p-3 sm:p-6 relative z-10">
                 <div 
-                    className={`w-full max-w-4xl flex flex-col items-center justify-center transition-opacity duration-200 ${
+                    className={`w-full max-w-5xl flex flex-col items-center justify-center transition-opacity duration-200 ${
                         isTransitioning ? 'opacity-0' : 'opacity-100'
                     }`}
                 >
@@ -341,44 +381,123 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                         BEAT 1: The Return (Trainer & Playtime)
                        ========================================================================= */}
                     {beat === 1 && (
-                        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                        <div className="flex flex-col items-center justify-center space-y-4 text-center w-full">
                             {/* Battle Podium */}
                             <div className="relative flex flex-col items-center">
-                                <div className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center z-10">
+                                <div className="h-40 sm:h-52 w-40 sm:w-52 flex items-end justify-center z-10">
                                     <img
-                                        src={`https://play.pokemonshowdown.com/sprites/trainers/${gameInfo.trainerSprite}.png`}
+                                        src={`${import.meta.env.BASE_URL}trainers/${gameInfo.trainerSprite}.png`}
                                         alt={trainerName}
-                                        className="w-32 h-32 sm:w-40 sm:h-40 object-contain pixelated drop-shadow-md"
+                                        className="max-h-full max-w-full object-contain object-bottom pixelated drop-shadow-[0_8px_16px_rgba(0,0,0,0.45)] scale-[2.7] sm:scale-[3.2] origin-bottom"
                                         onError={(e) => {
-                                            (e.currentTarget as HTMLImageElement).style.display = 'none';
+                                            (e.currentTarget as HTMLImageElement).src = `https://play.pokemonshowdown.com/sprites/trainers/${gameInfo.trainerSprite}.png`;
                                         }}
                                     />
                                 </div>
+                                {/* Ground contact shadow */}
+                                <div className="w-32 sm:w-44 h-3.5 bg-black/45 rounded-full blur-[2px] -mt-1.5 z-10" />
                                 {/* GBA Trainer circular podium */}
-                                <div className="w-36 sm:w-44 h-10 bg-gradient-to-r from-[#98b0c8] via-[#c8d8e8] to-[#98b0c8] rounded-[50%] border-2 border-[#303848] shadow-md -mt-5" />
+                                <div className="w-64 sm:w-80 h-14 bg-gradient-to-r from-[#8ca0b8] via-[#e2eaf4] to-[#8ca0b8] rounded-[50%] border-4 border-[#203040] shadow-xl -mt-5 z-0" />
                             </div>
 
                             {/* Trainer Badge Information */}
-                            <div className="bg-white/90 border border-[#303848]/20 px-4 py-2 rounded shadow-sm text-center">
-                                <div className="font-raw-data text-xs sm:text-sm font-bold text-[#303848]">
+                            <div className="bg-white/95 border-3 border-[#303848] px-5 sm:px-8 py-3 rounded-lg shadow-md text-center mt-2 max-w-sm sm:max-w-md w-full">
+                                <div className="font-raw-data text-sm sm:text-base font-bold text-[#303848]">
                                     TRAINER: {trainerName.toUpperCase()}
                                 </div>
-                                <div className="font-raw-data text-[10px] text-[#606878] mt-0.5">
+                                <div className="font-raw-data text-xs sm:text-sm text-[#606878] mt-0.5 font-bold">
                                     IDNo. {String(trainerId).padStart(5, '0')} · {gameInfo.region.toUpperCase()} REGION
+                                </div>
+
+                                {/* Gym Badges Case */}
+                                <div className="mt-2.5 pt-2 border-t border-[#d8e0e8]">
+                                    <div className="flex items-center justify-between text-[8px] sm:text-[9px] font-pixel text-[#607080] mb-1.5 px-1">
+                                        <span>GYM BADGES</span>
+                                        <span className="text-[#e65050] font-bold">8 / 8</span>
+                                    </div>
+                                    <div className="grid grid-cols-8 gap-1 sm:gap-2 p-1.5 bg-[#141e28] border-2 border-[#0a1018] rounded-md shadow-inner justify-items-center">
+                                        {(REGION_BADGES[gameInfo.region] || REGION_BADGES.Kanto).map((badge, idx) => (
+                                            <div
+                                                key={idx}
+                                                title={`${badge.name} Badge (${badge.city} City - Gym Leader ${badge.leader})`}
+                                                className="w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center relative cursor-help transition-transform hover:scale-125"
+                                                style={{
+                                                    backgroundColor: badge.color,
+                                                    boxShadow: `0 0 4px ${badge.color}aa, inset 1px 1px 2px rgba(255,255,255,0.7), inset -1px -1px 2px rgba(0,0,0,0.5)`,
+                                                    border: '1.5px solid #202020',
+                                                }}
+                                            >
+                                                <span className="text-[7px] sm:text-[8px] font-bold text-black/70 drop-shadow-xs">{badge.symbol}</span>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     )}
 
                     {/* =========================================================================
-                        BEAT 2: The Team As It Stood (Party Pokemon - Crisp, Full Color)
+                        BEAT 2: The Team As It Stood (Continuous Grand GBA Battle Stage)
                        ========================================================================= */}
                     {beat === 2 && (
-                        <div className="flex flex-col items-center justify-center w-full">
-                            {/* Party Lineup on Clean Background */}
-                            <div className="w-full max-w-6xl mx-auto px-2">
-                                {party.length > 0 ? (
-                                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 items-end justify-items-center">
+                        <div className="w-full flex flex-col items-center justify-center relative py-2 sm:py-4">
+                            {/* Atmospheric Arena Spotlight Beam */}
+                            <div className="absolute inset-0 gba-arena-spotlight -top-16 h-[520px] w-full max-w-5xl mx-auto z-0" />
+
+                            {party.length > 0 ? (
+                                <div className="w-full max-w-5xl mx-auto px-2 sm:px-4 relative z-10">
+                                    {/* 1. HERO SPRITE LAYER: Deeply Grounded to Dais Surface */}
+                                    <div className="flex items-end justify-center gap-1 sm:gap-3 md:gap-5 w-full h-44 sm:h-56 md:h-64 px-2 z-20 -mb-8 sm:-mb-12">
+                                        {party.map((mon, idx) => {
+                                            const natId = getNationalDexId(mon.species);
+                                            const speciesName = getPokemonName(natId);
+                                            const nickname = mon.nickname?.trim();
+                                            const hasCustomNickname = Boolean(
+                                                nickname &&
+                                                nickname.toUpperCase() !== speciesName.toUpperCase() &&
+                                                !nickname.includes('?')
+                                            );
+
+                                            const isCenter = idx === 2 || idx === 3;
+                                            const depthClass = isCenter 
+                                                ? 'translate-y-2 scale-110 z-30' 
+                                                : 'translate-y-0 scale-100 z-20';
+
+                                            return (
+                                                <div 
+                                                    key={idx} 
+                                                    className={`flex-1 flex flex-col items-center h-full max-w-[160px] min-w-0 transition-transform duration-300 ${depthClass}`}
+                                                >
+                                                    {/* Sprite Box: Base-Anchored (items-end, object-bottom) with scaling & trim */}
+                                                    <div className="relative w-full h-full flex items-end justify-center">
+                                                        <PokemonSprite
+                                                            species={mon.species}
+                                                            alt={nickname || speciesName}
+                                                            className="gba-sprite-img drop-shadow-[0_8px_14px_rgba(0,0,0,0.5)] scale-125 sm:scale-145 md:scale-155 origin-bottom hover:scale-170 transition-transform duration-200 cursor-pointer"
+                                                            trim
+                                                        />
+                                                        
+                                                        {/* Localized Contact Shadow: Locks feet directly into the turf */}
+                                                        <div className="gba-contact-shadow" />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* 2. CONTINUOUS GBA BATTLE STADIUM DAIS */}
+                                    <div className="relative z-10 w-full">
+                                        <div className="gba-stage-surface">
+                                            <div className="gba-stage-ring" />
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
+                                                <div className="w-20 h-10 sm:w-28 sm:h-14 border-2 border-white rounded-[50%]" />
+                                            </div>
+                                        </div>
+                                        <div className="gba-stage-lip" />
+                                    </div>
+
+                                    {/* 3. GROUNDED GBA-STYLE NAMEPLATES (Mounted Along the Stage Rim) */}
+                                    <div className="flex items-start justify-center gap-1 sm:gap-3 md:gap-5 w-full mt-4 px-2 z-20">
                                         {party.map((mon, idx) => {
                                             const natId = getNationalDexId(mon.species);
                                             const speciesName = getPokemonName(natId);
@@ -393,75 +512,64 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                             return (
                                                 <div 
                                                     key={idx} 
-                                                    className="flex flex-col items-center text-center w-full"
+                                                    className="flex-1 max-w-[160px] min-w-0 flex flex-col items-center text-center"
                                                 >
-                                                    {/* Pokémon Sprite: Full Color, Crisp, No Sepia, No Grayscale */}
-                                                    <div className="relative flex flex-col items-center">
-                                                        <div className="w-20 h-20 sm:w-28 sm:h-28 flex items-center justify-center z-10">
-                                                            <PokemonSprite
-                                                                species={mon.species}
-                                                                alt={nickname || speciesName}
-                                                                className="w-full h-full object-contain pixelated drop-shadow"
-                                                            />
-                                                        </div>
-                                                        {/* Mini GBA grass battle base */}
-                                                        <div className="w-24 sm:w-32 h-6 bg-[#78b878] rounded-[50%] border border-[#303848] shadow-sm -mt-2.5" />
-                                                    </div>
-
-                                                    <div className="mt-2 w-full">
-                                                        <div className="font-pixel font-bold text-xs sm:text-sm text-[#202830] truncate">
+                                                    <div className="w-full bg-[#1e293b]/95 border-2 border-[#475569] rounded px-1.5 py-1.5 shadow-md flex flex-col items-center">
+                                                        <span className="font-pixel font-bold text-[9px] sm:text-xs text-white truncate w-full">
                                                             {hasCustomNickname ? nickname : speciesName}
-                                                        </div>
+                                                        </span>
                                                         {hasCustomNickname && (
-                                                            <div className="text-[10px] font-pixel text-[#606878] truncate">
+                                                            <span className="text-[8px] font-pixel text-[#94a3b8] truncate w-full">
                                                                 {speciesName}
-                                                            </div>
+                                                            </span>
                                                         )}
-                                                        <div className="font-raw-data text-[10px] text-[#d8382c] mt-0.5">
+                                                        <span className="inline-block mt-1 px-2 py-0.5 bg-[#d8382c] text-white font-raw-data text-[8px] sm:text-[9px] rounded font-bold tracking-tight shadow-xs">
                                                             Lv.{level}
-                                                        </div>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             );
                                         })}
                                     </div>
-                                ) : (
-                                    <div className="text-center py-8 font-pixel text-sm text-[#606878] italic">
-                                        Your active party was empty. All companions rested securely in the PC storage boxes.
-                                    </div>
-                                )}
-                            </div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-16 font-pixel text-sm text-[#606878] italic bg-white/60 border-2 border-[#303848]/20 rounded-lg p-6 max-w-md mx-auto shadow-sm">
+                                    Your active party was empty. All companions rested securely in the PC storage boxes.
+                                </div>
+                            )}
                         </div>
                     )}
 
                     {/* =========================================================================
-                        BEAT 3: The Road Here (Starter & First Companion - Crisp, Full Color)
+                        BEAT 3: The Road Here (Starter & First Companion - Grounded Staging)
                        ========================================================================= */}
                     {beat === 3 && (
-                        <div className="flex flex-col items-center justify-center space-y-6 w-full max-w-xl">
-                            <div className="flex items-center justify-center gap-6 sm:gap-12">
+                        <div className="flex flex-col items-center justify-center space-y-6 w-full max-w-2xl">
+                            <div className="flex items-center justify-center gap-8 sm:gap-16 w-full">
                                 {/* Starter Mon Platform */}
                                 <div className="flex flex-col items-center text-center">
                                     <div className="relative flex flex-col items-center">
-                                        <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center z-10">
+                                        <div className="h-36 sm:h-48 w-36 sm:w-48 flex items-end justify-center z-10 pb-1">
                                             <PokemonSprite
                                                 species={starterInfo.species}
                                                 alt={starterInfo.starterSpecies}
-                                                className="w-full h-full object-contain pixelated drop-shadow"
+                                                className="gba-sprite-img drop-shadow-md scale-150 sm:scale-[1.8] origin-bottom"
+                                                trim
                                             />
                                         </div>
-                                        <div className="w-28 sm:w-36 h-8 bg-[#78b878] rounded-[50%] border border-[#303848] -mt-3 shadow-sm" />
+                                        <div className="gba-contact-shadow" />
+                                        <div className="w-44 sm:w-56 h-12 bg-gradient-to-r from-[#509850] via-[#78c878] to-[#509850] rounded-[50%] border-3 border-[#204020] -mt-5 shadow-lg z-0" />
                                     </div>
-                                    <div className="mt-2 font-pixel font-bold text-xs sm:text-sm text-[#202830]">
+                                    <div className="mt-3 font-pixel font-bold text-xs sm:text-sm text-[#202830]">
                                         {starterInfo.currentName}
                                     </div>
-                                    <div className="font-raw-data text-[10px] text-[#606878]">
+                                    <div className="font-raw-data text-[10px] text-[#405030] font-bold">
                                         FIRST PARTNER · LV.{starterInfo.metLevel}
                                     </div>
                                 </div>
 
                                 {/* Journey Connector Arrow */}
-                                <div className="font-raw-data text-base sm:text-xl text-[#303848]">
+                                <div className="font-raw-data text-xl sm:text-2xl text-[#303848] font-bold">
                                     ➔
                                 </div>
 
@@ -469,25 +577,27 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                                 {firstBadgeCompanion ? (
                                     <div className="flex flex-col items-center text-center">
                                         <div className="relative flex flex-col items-center">
-                                            <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center z-10">
+                                            <div className="h-36 sm:h-48 w-36 sm:w-48 flex items-end justify-center z-10 pb-1">
                                                 <PokemonSprite
                                                     species={firstBadgeCompanion.species}
                                                     alt={firstBadgeCompanion.speciesName}
-                                                    className="w-full h-full object-contain pixelated drop-shadow"
+                                                    className="gba-sprite-img drop-shadow-md scale-150 sm:scale-[1.8] origin-bottom"
+                                                    trim
                                                 />
                                             </div>
-                                            <div className="w-28 sm:w-36 h-8 bg-[#d8b068] rounded-[50%] border border-[#303848] -mt-3 shadow-sm" />
+                                            <div className="gba-contact-shadow" />
+                                            <div className="w-44 sm:w-56 h-12 bg-gradient-to-r from-[#b89040] via-[#e0b860] to-[#b89040] rounded-[50%] border-3 border-[#483018] -mt-5 shadow-lg z-0" />
                                         </div>
-                                        <div className="mt-2 font-pixel font-bold text-xs sm:text-sm text-[#202830]">
+                                        <div className="mt-3 font-pixel font-bold text-xs sm:text-sm text-[#202830]">
                                             {firstBadgeCompanion.speciesName}
                                         </div>
-                                        <div className="font-raw-data text-[10px] text-[#606878]">
+                                        <div className="font-raw-data text-[10px] text-[#504020] font-bold">
                                             FIRST JOINED · LV.{firstBadgeCompanion.metLevel}
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center text-center">
-                                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-[#303848]/40 flex items-center justify-center text-xl text-[#8898a8]">
+                                        <div className="w-20 h-20 rounded-full border-2 border-dashed border-[#303848]/40 flex items-center justify-center text-2xl text-[#8898a8]">
                                             ?
                                         </div>
                                         <div className="font-raw-data text-[10px] text-[#606878] mt-2">
@@ -498,7 +608,7 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                             </div>
 
                             {/* League Badge Plaque */}
-                            <div className="inline-flex items-center gap-2 bg-white/90 border border-[#303848]/20 px-4 py-1.5 rounded shadow-sm text-xs font-raw-data text-[#303848]">
+                            <div className="inline-flex items-center gap-2 bg-white/95 border-3 border-[#303848] px-6 py-2.5 rounded-lg shadow-sm text-xs font-raw-data text-[#303848] font-bold">
                                 <span>🏆</span>
                                 <span>{hallOfFameStatus.hasBeatenE4 ? 'CHAMPION RECORDED' : 'LEAGUE CHALLENGE INCOMPLETE'}</span>
                             </div>
@@ -506,43 +616,47 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                     )}
 
                     {/* =========================================================================
-                        BEAT 4: The Ghost (The One Who Didn't Make It - Crisp, Full Color)
+                        BEAT 4: The Ghost (The One Who Didn't Make It - Ethereal Platform)
                        ========================================================================= */}
                     {beat === 4 && (
-                        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                        <div className="flex flex-col items-center justify-center space-y-5 text-center w-full">
                             {ghostData ? (
                                 <>
-                                    {/* Crisp, Full Color Sprite on Clean Background (No Sepia, No Grayscale) */}
                                     <div className="relative flex flex-col items-center">
-                                        <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center z-10">
+                                        <div className="h-44 sm:h-56 w-44 sm:w-56 flex items-end justify-center z-10 pb-1">
                                             <PokemonSprite
                                                 species={ghostData.species}
                                                 alt={ghostData.nickname}
-                                                className="w-full h-full object-contain pixelated drop-shadow-md"
+                                                className="gba-sprite-img drop-shadow-[0_0_20px_rgba(168,85,247,0.8)] scale-[2.2] sm:scale-[2.6] origin-bottom"
+                                                trim
                                             />
                                         </div>
-                                        {/* Soft mystic battle platform */}
-                                        <div className="w-36 sm:w-48 h-10 bg-gradient-to-r from-[#b0a8c8] via-[#e8e0f8] to-[#b0a8c8] rounded-[50%] border-2 border-[#303848] -mt-4 shadow-sm" />
+                                        <div className="gba-contact-shadow" />
+                                        {/* Lavender Tower Stone Altar */}
+                                        <div className="w-52 sm:w-72 h-14 bg-gradient-to-r from-[#44305c] via-[#6d5090] to-[#44305c] rounded-[50%] border-3 border-[#221430] -mt-6 shadow-[0_0_30px_rgba(168,85,247,0.5)] z-0" />
                                     </div>
 
                                     {/* Ghost Mon Badge */}
-                                    <div className="bg-white/90 border border-[#303848]/20 px-4 py-2 rounded shadow-sm text-center">
-                                        <div className="font-pixel font-bold text-sm sm:text-base text-[#202830]">
-                                            {ghostData.nickname} <span className="font-normal text-xs text-[#606878]">({ghostData.speciesName})</span>
+                                    <div className="bg-white/95 border-3 border-[#7860c8] px-5 py-2.5 rounded-lg shadow-md text-center mt-2">
+                                        <div className="font-pixel font-bold text-xs sm:text-sm text-[#7860c8]">
+                                            {ghostData.nickname.toUpperCase()}
                                         </div>
-                                        <div className="font-raw-data text-[10px] text-[#805090] mt-0.5">
-                                            CAUGHT LV.{ghostData.metLevel} ➔ LAST SEEN LV.{ghostData.currentLevel}
+                                        <div className="font-raw-data text-[10px] text-[#606878] mt-1 font-bold">
+                                            NO. {getNationalDexId(ghostData.species).toString().padStart(3, '0')} {ghostData.speciesName.toUpperCase()} · LV. {ghostData.currentLevel}
                                         </div>
                                     </div>
                                 </>
                             ) : (
-                                <div className="flex flex-col items-center justify-center py-6">
-                                    <div className="w-20 h-20 rounded-full bg-[#78b878]/20 border-2 border-[#78b878] flex items-center justify-center text-3xl shadow-sm">
-                                        ✨
+                                <div className="flex flex-col items-center justify-center py-6 bg-white/90 border-3 border-[#389858] rounded-xl shadow-md p-6 max-w-md">
+                                    <div className="w-16 h-16 rounded-full bg-[#e8f8e8] border-2 border-[#389858] flex items-center justify-center text-3xl text-[#389858] shadow-inner mb-3">
+                                        ✓
                                     </div>
-                                    <div className="font-raw-data text-xs sm:text-sm text-[#407040] font-bold mt-4">
+                                    <div className="font-pixel text-xs sm:text-sm text-[#407040] font-bold">
                                         ALL COMPANIONS PRESERVED
                                     </div>
+                                    <p className="text-[10px] font-pixel text-[#606878] mt-1">
+                                        No fallen companions detected in archive.
+                                    </p>
                                 </div>
                             )}
                         </div>
@@ -555,20 +669,20 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                         <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-lg">
                             {/* Game Cartridge / Pokédex emblem */}
                             <div className="relative flex flex-col items-center">
-                                <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl bg-white border-2 border-[#303848] flex items-center justify-center shadow-md p-3">
+                                <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-white border-4 border-[#303848] flex items-center justify-center shadow-2xl p-3">
                                     <img
                                         src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
                                         alt="Poké Ball"
-                                        className="w-16 h-16 object-contain pixelated"
+                                        className="w-20 h-20 object-contain pixelated drop-shadow-md"
                                         onError={(e) => {
                                             (e.currentTarget as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="%23fff" stroke="%23303848" stroke-width="3"/><path d="M 2,20 A 18 18 0 0 1 38,20 Z" fill="%23d8382c"/><circle cx="20" cy="20" r="5" fill="%23fff" stroke="%23303848" stroke-width="2.5"/></svg>';
                                         }}
                                     />
                                 </div>
-                                <div className="w-32 h-4 bg-[#303848]/20 rounded-full blur-[2px] mt-1" />
+                                <div className="w-36 h-4 bg-[#303848]/25 rounded-full blur-[2px] mt-2" />
                             </div>
 
-                            <div className="font-raw-data text-xs sm:text-sm font-bold text-[#303848]">
+                            <div className="font-raw-data text-xs sm:text-sm font-bold text-[#303848] bg-white/90 border-2 border-[#303848]/30 px-4 py-2 rounded-md shadow-xs">
                                 {gameInfo.title.toUpperCase()} · {gameInfo.year}
                             </div>
                         </div>
@@ -576,10 +690,10 @@ export const Homecoming: React.FC<HomecomingProps> = ({
                 </div>
             </main>
 
-            {/* Bottom Screen: Authentic GBA .dialog-box with "click to advance" bouncing triangle */}
-            <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 pb-6 relative z-20">
+            {/* Bottom Screen: Authentic GBA .frlg-dialogue-dock with "click to advance" bouncing triangle */}
+            <div className="w-full max-w-5xl mx-auto px-4 pb-4 sm:pb-6 relative z-20">
                 <div 
-                    className="dialog-box w-full p-4 sm:p-6 min-h-[140px] sm:min-h-[160px] flex flex-col justify-between relative cursor-pointer select-none transition-shadow hover:shadow-2xl"
+                    className="frlg-dialogue-dock w-full p-4 sm:p-5 min-h-[140px] sm:min-h-[155px] flex flex-col justify-between relative cursor-pointer select-none transition-shadow hover:shadow-xl"
                     onClick={(e) => {
                         e.stopPropagation();
                         handleNext();

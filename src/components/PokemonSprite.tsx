@@ -10,7 +10,10 @@ export const MISSINGNO_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.
 export interface PokemonSpriteProps extends React.ImgHTMLAttributes<HTMLImageElement> {
     species?: number | null;
     fallbackSrc?: string;
+    trim?: boolean;
 }
+
+const trimCache = new Map<string, string>();
 
 export const PokemonSprite: React.FC<PokemonSpriteProps> = ({
     species,
@@ -18,31 +21,116 @@ export const PokemonSprite: React.FC<PokemonSpriteProps> = ({
     className = '',
     style,
     fallbackSrc = MISSINGNO_SVG,
+    trim = false,
     onError,
     ...rest
 }) => {
     const nationalId = typeof species === 'number' && !isNaN(species) ? getNationalDexId(species) : 0;
     const isValid = nationalId > 0 && nationalId <= 1025;
     
+    // Prefer authentic Gen 3 FireRed/LeafGreen sprites for Gen 1-3, with modern PokeAPI fallback
     const defaultUrl = isValid
-        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nationalId}.png`
+        ? (nationalId <= 386 
+            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-iii/firered-leafgreen/${nationalId}.png`
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nationalId}.png`)
         : fallbackSrc;
 
-    const [imgSrc, setImgSrc] = useState<string>(defaultUrl);
+    const [imgSrc, setImgSrc] = useState<string>(() => {
+        if (trim && isValid && trimCache.has(defaultUrl)) {
+            return trimCache.get(defaultUrl)!;
+        }
+        return defaultUrl;
+    });
     const [hasFailed, setHasFailed] = useState<boolean>(!isValid);
 
     useEffect(() => {
-        if (isValid) {
-            setImgSrc(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nationalId}.png`);
-            setHasFailed(false);
-        } else {
+        if (!isValid) {
             setImgSrc(fallbackSrc);
             setHasFailed(true);
+            return;
         }
-    }, [nationalId, isValid, fallbackSrc]);
+
+        const sourceUrl = nationalId <= 386
+            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-iii/firered-leafgreen/${nationalId}.png`
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nationalId}.png`;
+
+        if (trim) {
+            if (trimCache.has(sourceUrl)) {
+                setImgSrc(trimCache.get(sourceUrl)!);
+                setHasFailed(false);
+                return;
+            }
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                try {
+                    const c = document.createElement('canvas');
+                    c.width = img.naturalWidth;
+                    c.height = img.naturalHeight;
+                    const ctx = c.getContext('2d');
+                    if (!ctx) {
+                        setImgSrc(sourceUrl);
+                        return;
+                    }
+                    ctx.drawImage(img, 0, 0);
+                    const imgData = ctx.getImageData(0, 0, c.width, c.height).data;
+                    let minY = c.height, maxY = 0, minX = c.width, maxX = 0;
+                    let hasVisiblePixels = false;
+                    for (let y = 0; y < c.height; y++) {
+                        for (let x = 0; x < c.width; x++) {
+                            if (imgData[(y * c.width + x) * 4 + 3] > 10) {
+                                hasVisiblePixels = true;
+                                if (y < minY) minY = y;
+                                if (y > maxY) maxY = y;
+                                if (x < minX) minX = x;
+                                if (x > maxX) maxX = x;
+                            }
+                        }
+                    }
+                    if (hasVisiblePixels) {
+                        const cropW = maxX - minX + 1;
+                        const cropH = maxY - minY + 1;
+                        const c2 = document.createElement('canvas');
+                        c2.width = cropW;
+                        c2.height = cropH;
+                        const ctx2 = c2.getContext('2d');
+                        if (ctx2) {
+                            ctx2.drawImage(c, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+                            const trimmedUrl = c2.toDataURL('image/png');
+                            trimCache.set(sourceUrl, trimmedUrl);
+                            setImgSrc(trimmedUrl);
+                            setHasFailed(false);
+                            return;
+                        }
+                    }
+                    setImgSrc(sourceUrl);
+                    setHasFailed(false);
+                } catch {
+                    setImgSrc(sourceUrl);
+                    setHasFailed(false);
+                }
+            };
+            img.onerror = () => {
+                // Fallback to standard PokeAPI sprite if FRLG version 404s
+                const fallbackMonUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nationalId}.png`;
+                setImgSrc(fallbackMonUrl);
+            };
+            img.src = sourceUrl;
+        } else {
+            setImgSrc(sourceUrl);
+            setHasFailed(false);
+        }
+    }, [nationalId, isValid, fallbackSrc, trim]);
 
     const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
         if (!hasFailed) {
+            // If FRLG version failed, try standard PokeAPI
+            if (imgSrc.includes('firered-leafgreen')) {
+                const fallbackStandard = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${nationalId}.png`;
+                setImgSrc(fallbackStandard);
+                return;
+            }
             setHasFailed(true);
             setImgSrc(fallbackSrc);
         }

@@ -58,55 +58,58 @@
   /* Authentic FRLG GBA Dialog Boxes */
   .dialog-box {
     position: relative;
-    background-color: #f0f8ff; background-image: repeating-linear-gradient(45deg, #e0f0ff 25%, transparent 25%, transparent 75%, #e0f0ff 75%, #e0f0ff), repeating-linear-gradient(45deg, #e0f0ff 25%, #f0f8ff 25%, #f0f8ff 75%, #e0f0ff 75%, #e0f0ff); background-position: 0 0, 16px 16px; background-size: 32px 32px;
+    background-color: #ffffff;
     border-radius: 8px;
     border: 4px solid var(--frlg-blue, #5080e6);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #b0c8f0, 0 4px 12px rgba(0, 0, 0, 0.1);
     color: var(--frlg-text-dark, #282828);
   }
 
   .dialog-box-red {
     position: relative;
-    background-color: #f0f8ff; background-image: repeating-linear-gradient(45deg, #e0f0ff 25%, transparent 25%, transparent 75%, #e0f0ff 75%, #e0f0ff), repeating-linear-gradient(45deg, #e0f0ff 25%, #f0f8ff 25%, #f0f8ff 75%, #e0f0ff 75%, #e0f0ff); background-position: 0 0, 16px 16px; background-size: 32px 32px;
+    background-color: #ffffff;
     border-radius: 8px;
     border: 4px solid var(--frlg-red, #e65050);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #ffb0b0, 0 4px 12px rgba(0, 0, 0, 0.1);
     color: var(--frlg-text-dark, #282828);
   }
 
   .dialog-box-blue {
     position: relative;
-    background-color: #f0f8ff; background-image: repeating-linear-gradient(45deg, #e0f0ff 25%, transparent 25%, transparent 75%, #e0f0ff 75%, #e0f0ff), repeating-linear-gradient(45deg, #e0f0ff 25%, #f0f8ff 25%, #f0f8ff 75%, #e0f0ff 75%, #e0f0ff); background-position: 0 0, 16px 16px; background-size: 32px 32px;
+    background-color: #ffffff;
     border-radius: 8px;
     border: 4px solid var(--frlg-blue, #5080e6);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #b0c8f0, 0 4px 12px rgba(0, 0, 0, 0.1);
     color: var(--frlg-text-dark, #282828);
   }
 
   .dialog-box-green {
     position: relative;
-    background-color: #f0f8ff; background-image: repeating-linear-gradient(45deg, #e0f0ff 25%, transparent 25%, transparent 75%, #e0f0ff 75%, #e0f0ff), repeating-linear-gradient(45deg, #e0f0ff 25%, #f0f8ff 25%, #f0f8ff 75%, #e0f0ff 75%, #e0f0ff); background-position: 0 0, 16px 16px; background-size: 32px 32px;
+    background-color: #ffffff;
     border-radius: 8px;
     border: 4px solid var(--frlg-green, #389858);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #a0dcb0, 0 4px 12px rgba(0, 0, 0, 0.1);
     color: var(--frlg-text-dark, #282828);
   }
 
   .dialog-box-amber {
     position: relative;
-    background-color: #f0f8ff; background-image: repeating-linear-gradient(45deg, #e0f0ff 25%, transparent 25%, transparent 75%, #e0f0ff 75%, #e0f0ff), repeating-linear-gradient(45deg, #e0f0ff 25%, #f0f8ff 25%, #f0f8ff 75%, #e0f0ff 75%, #e0f0ff); background-position: 0 0, 16px 16px; background-size: 32px 32px;
+    background-color: #ffffff;
     border-radius: 8px;
     border: 4px solid var(--frlg-amber, #e69820);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #ffe0b0, 0 4px 12px rgba(0, 0, 0, 0.1);
     color: var(--frlg-text-dark, #282828);
   }
 
   /* FRLG Bill's PC Window & Slots */
   .frlg-pc-window {
-    background-color: #f0f8ff; background-image: repeating-linear-gradient(45deg, #e0f0ff 25%, transparent 25%, transparent 75%, #e0f0ff 75%, #e0f0ff), repeating-linear-gradient(45deg, #e0f0ff 25%, #f0f8ff 25%, #f0f8ff 75%, #e0f0ff 75%, #e0f0ff); background-position: 0 0, 16px 16px; background-size: 32px 32px;
+    background-color: #f0f8ff;
+    background-image: repeating-linear-gradient(45deg, #e0f0ff 25%, transparent 25%, transparent 75%, #e0f0ff 75%, #e0f0ff), repeating-linear-gradient(45deg, #e0f0ff 25%, #f0f8ff 25%, #f0f8ff 75%, #e0f0ff 75%, #e0f0ff);
+    background-position: 0 0, 16px 16px;
+    background-size: 32px 32px;
     border-radius: 12px;
     border: 4px solid var(--frlg-blue, #5080e6);
-    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #b0c8f0, 0 4px 12px rgba(80, 128, 230, 0.15);
+    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #b0c8f0, 0 6px 16px rgba(80, 128, 230, 0.2);
   }
 
   .frlg-slot {
@@ -119,7 +122,7 @@
 
   .frlg-slot:hover {
     border-color: #e65050;
-    background-color: #fff5f5;
+    background-color: rgba(255, 240, 240, 0.7);
     box-shadow: 0 0 0 2px #ff8c8c, 0 4px 8px rgba(230, 80, 80, 0.2);
     transform: scale(1.05);
     z-index: 10;
@@ -127,10 +130,143 @@
 
   .frlg-slot-selected {
     border-color: #e65050 !important;
-    background-color: #ffebeb !important;
-    box-shadow: 0 0 0 3px #ff6b6b, 0 4px 12px rgba(230, 80, 80, 0.3) !important;
+    background-color: rgba(255, 235, 235, 0.9) !important;
+    box-shadow: 0 0 0 3px #ff6b6b, 0 4px 12px rgba(230, 80, 80, 0.35) !important;
     transform: scale(1.06) !important;
     z-index: 20;
+  }
+
+  /* Authentic Unified GBA Battle / Hall of Fame Stage Platform */
+  .frlg-stage-platform {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(180deg, #68b878 0%, #489858 50%, #307040 100%);
+    border-radius: 9999px;
+    border: 3px solid #285830;
+    box-shadow: 
+      inset 0 3px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -4px 0 rgba(0, 0, 0, 0.25),
+      0 10px 25px rgba(20, 50, 25, 0.25);
+  }
+
+  /* GBA Continuous Perspective Battle Arena Dais */
+  .gba-stage-surface {
+    position: relative;
+    width: 100%;
+    height: 90px;
+    background: radial-gradient(ellipse 65% 50% at 50% 40%, #70c070 0%, #50a050 60%, #3a7a3a 100%);
+    border-radius: 50% / 30px;
+    border: 3px solid #202830;
+    box-shadow: 
+      inset 0 4px 12px rgba(255, 255, 255, 0.35),
+      inset 0 -4px 8px rgba(0, 0, 0, 0.3),
+      0 14px 28px -4px rgba(16, 24, 40, 0.3);
+  }
+
+  .gba-stage-ring {
+    position: absolute;
+    top: 10px;
+    left: 4%;
+    right: 4%;
+    bottom: 10px;
+    border-radius: 50% / 24px;
+    border: 2px dashed rgba(255, 255, 255, 0.45);
+    pointer-events: none;
+  }
+
+  .gba-stage-lip {
+    position: absolute;
+    bottom: -10px;
+    left: 2px;
+    right: 2px;
+    height: 16px;
+    background: linear-gradient(180deg, #2a582a 0%, #1a381a 100%);
+    border-radius: 0 0 50% 50% / 0 0 20px 20px;
+    border: 3px solid #202830;
+    border-top: none;
+    z-index: 1;
+  }
+
+  /* Strict baseline sprite grounding (no floatiness) */
+  .gba-sprite-img {
+    image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+    object-fit: contain;
+    object-position: bottom center;
+    max-height: 100%;
+    max-width: 100%;
+    display: block;
+  }
+
+  /* Ground Contact Shadow beneath each Pokémon's feet */
+  .frlg-contact-shadow, .gba-contact-shadow {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;
+    max-width: 95px;
+    height: 12px;
+    background: radial-gradient(ellipse at center, rgba(16, 24, 40, 0.45) 0%, rgba(16, 24, 40, 0.15) 55%, transparent 75%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Atmospheric Arena Spotlight Beam */
+  .gba-arena-spotlight {
+    background: radial-gradient(ellipse 70% 60% at 50% 20%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 50%, transparent 80%);
+    pointer-events: none;
+  }
+
+  /* Story Mode Environmental Canvas Backdrops */
+  .gba-scene-environment {
+    background: 
+      radial-gradient(ellipse at 50% 25%, rgba(255, 255, 255, 0.95) 0%, rgba(220, 235, 250, 0.75) 45%, rgba(185, 212, 238, 0.95) 100%),
+      linear-gradient(180deg, #d8e8f8 0%, #b8d4f0 60%, #9cbcd8 100%);
+  }
+
+  /* Beat 1: Professor Oak's Research Laboratory */
+  .gba-scene-lab {
+    background: 
+      radial-gradient(ellipse 75% 55% at 50% 12%, rgba(255, 250, 235, 0.95) 0%, rgba(245, 230, 205, 0.5) 45%, transparent 80%),
+      linear-gradient(180deg, #d6c2a4 0%, #b89e78 48%, #3a2210 48.5%, #7a4e22 49.5%, #523012 100%);
+    position: relative;
+  }
+
+  /* Beat 2: Indigo Plateau / Hall of Fame Arena */
+  .gba-scene-hall-of-fame {
+    background: 
+      radial-gradient(ellipse 65% 75% at 50% 5%, rgba(140, 190, 255, 0.5) 0%, rgba(60, 110, 210, 0.18) 45%, transparent 80%),
+      linear-gradient(180deg, #0b1220 0%, #17243b 44%, #334155 45%, #080d19 46%, #0d1527 100%);
+    position: relative;
+  }
+
+  /* Beat 3: Kanto / Hoenn Route Trail */
+  .gba-scene-route {
+    background: 
+      radial-gradient(ellipse 80% 50% at 50% 15%, rgba(255, 255, 255, 0.9) 0%, rgba(180, 220, 255, 0.5) 55%, transparent 80%),
+      linear-gradient(180deg, #6ec0ea 0%, #9ad4ee 44%, #2b5624 44.5%, #4e8838 46%, #7c6246 54%, #543e2e 100%);
+    position: relative;
+  }
+
+  /* Beat 4: Lavender Tower Mystic Chamber */
+  .gba-scene-tower {
+    background: 
+      radial-gradient(ellipse 70% 60% at 50% 10%, rgba(210, 190, 255, 0.5) 0%, rgba(110, 75, 175, 0.2) 50%, transparent 80%),
+      linear-gradient(180deg, #140b22 0%, #24163c 42%, #382458 42.5%, #180e2a 44%, #120a20 100%);
+    position: relative;
+  }
+
+  /* Authentic GBA Bottom-Pinned Dialogue Dock */
+  .frlg-dialogue-dock {
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 4px solid var(--frlg-blue, #5080e6);
+    box-shadow: 
+      inset 0 0 0 2px #ffffff,
+      inset 0 0 0 4px #b0c8f0,
+      0 6px 18px rgba(0, 0, 0, 0.15);
   }
 
   /* GBA Stat Screen Table Styling with Pixel-Perfect Borders & Alternating Rows */
@@ -138,7 +274,7 @@
     border: 3px solid #384858;
     border-radius: 8px;
     overflow: hidden;
-    background-color: #f0f8ff; background-image: repeating-linear-gradient(45deg, #e0f0ff 25%, transparent 25%, transparent 75%, #e0f0ff 75%, #e0f0ff), repeating-linear-gradient(45deg, #e0f0ff 25%, #f0f8ff 25%, #f0f8ff 75%, #e0f0ff 75%, #e0f0ff); background-position: 0 0, 16px 16px; background-size: 32px 32px;
+    background-color: #ffffff;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
   }
 

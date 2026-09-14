@@ -382,14 +382,13 @@ interface PokemonSlotProps {
 
 const PokemonSlot: React.FC<PokemonSlotProps> = ({
     pokemon,
-    slotNumber,
     isSelected,
     onClick,
 }) => {
     if (!pokemon) {
         return (
-            <div className="aspect-square bg-transparent border-2 border-transparent rounded-lg flex items-center justify-center text-[12px] font-pixel text-[#a8b8c8] select-none">
-                {slotNumber}
+            <div className="aspect-square flex items-center justify-center select-none group/empty">
+                <div className="w-2 h-2 rounded-full bg-[#5080e6]/25 group-hover/empty:bg-[#5080e6]/50 transition-colors" />
             </div>
         );
     }
@@ -405,17 +404,17 @@ const PokemonSlot: React.FC<PokemonSlotProps> = ({
             <PokemonSprite
                 species={pokemon.species}
                 alt={getDisplayName(pokemon.nickname, pokemon.species)}
-                className="w-full h-full object-contain p-0.5 transition-transform duration-200 group-hover:scale-115 drop-shadow-xs"
+                className="w-full h-full object-contain p-0.5 transition-transform duration-200 group-hover:scale-115 drop-shadow-sm pixelated"
             />
 
             {/* Micro Level Tag */}
-            <span className="absolute bottom-0.5 right-1 font-pixel text-[7px] text-[#606870] group-hover:text-[#282828] bg-white/80 px-0.5 rounded leading-none">
+            <span className="absolute bottom-1 right-1 font-pixel text-[8px] font-bold text-[#304860] bg-white/90 border border-[#b8c8d8] px-1 py-0.2 rounded leading-none shadow-2xs">
                 {pokemon.metLevel}
             </span>
 
             {/* Shiny Micro Indicator */}
             {isShiny(pokemon) && (
-                <span className="absolute top-0.5 left-1 text-[8px] text-amber-500 leading-none">
+                <span className="absolute top-1 right-1 text-[9px] text-amber-500 leading-none drop-shadow-xs">
                     ★
                 </span>
             )}
